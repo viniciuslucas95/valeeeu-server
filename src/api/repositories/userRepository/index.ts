@@ -1,0 +1,1 @@
+export { UserRepositoryPostgresql } from './UserRepositoryPostgresql';

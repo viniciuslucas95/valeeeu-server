@@ -1,0 +1,48 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/api/index.js",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.1",
+    "validator": "^13.6.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.13",
+    "@types/faker": "^5.5.8",
+    "@types/jest": "^27.0.2",
+    "@types/jsonwebtoken": "^8.5.5",
+    "@types/node": "^16.9.6",
+    "@types/pg": "^8.6.1",
+    "@types/validator": "^13.6.3",
+    "axios": "^0.21.4",
+    "faker": "^5.5.3",
+    "jest": "^27.2.1",
+    "ts-jest": "^27.0.5",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "start": "NODE_ENV=production node dist/api/index.js",
+    "dev": "NODE_ENV=development ts-node-dev --respawn --poll --transpile-only --ignore-watch node_modules src/api/index.ts",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "test": "jest --watchAll --runInBand"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viniciuslucas95/valeeeu-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/viniciuslucas95/valeeeu-server/issues"
+  },
+  "homepage": "https://github.com/viniciuslucas95/valeeeu-server#readme"
+}

@@ -1,0 +1,66 @@
+import {
+  IUserCreationDto,
+  IUserReadByEmailResultDto,
+  IUserUpdateDto,
+} from '../../entities/dtos/user';
+import { User } from '../../entities/models';
+import { DatabaseConnection } from '../../types';
+import { IUserRepository } from './interfaces';
+
+export class UserRepositoryPostgresql implements IUserRepository {
+  constructor(private readonly connection: DatabaseConnection) {}
+
+  async createAsync(data: User) {
+    const { id, email, password, createdAt, updatedAt } = data;
+    const query =
+      'INSERT INTO "user" (id, email, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5);';
+    await this.connection.query(query, [
+      id,
+      email,
+      password,
+      createdAt,
+      updatedAt,
+    ]);
+  }
+
+  async updateAsync(id: string, data: IUserUpdateDto) {
+    const { email, password, updatedAt } = data;
+    const query =
+      'UPDATE "user" SET email = $1, password = $2, updated_at = $3 WHERE id = $4;';
+    await this.connection.query(query, [email, password, updatedAt, id]);
+  }
+
+  async deleteAsync(id: string) {
+    const query = 'DELETE FROM "user" WHERE id = $1;';
+    await this.connection.query(query, [id]);
+  }
+
+  async findByIdAsync(id: string): Promise<IUserCreationDto | undefined> {
+    const query = 'SELECT email, password FROM "user" WHERE id = $1;';
+    const { rows } = await this.connection.query<IUserCreationDto>(query, [id]);
+    return rows[0] ?? undefined;
+  }
+
+  async findByEmailAsync(
+    email: string
+  ): Promise<IUserReadByEmailResultDto | undefined> {
+    const query = 'SELECT id, password FROM "user" WHERE email = $1;';
+    const { rows } = await this.connection.query<IUserReadByEmailResultDto>(
+      query,
+      [email]
+    );
+    return rows[0] ?? undefined;
+  }
+
+  async checkIdExistenceAsync(id: string) {
+    const query = 'SELECT id FROM "user" WHERE id = $1;';
+    const { rows } = await this.connection.query(query, [id]);
+    return rows[0] ? true : false;
+  }
+
+  async checkEmailExistenceAsync(email: string) {
+    const query = 'SELECT email FROM "user" WHERE email = $1;';
+    const { rows } = await this.connection.query(query, [email]);
+    return rows[0] ? true : false;
+  }
+}
