@@ -1,17 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { InvalidRequestError } from '../errors';
+import {
+  AccessTokenServiceFactory,
+  RefreshTokenServiceFactory,
+  UserServiceFactory,
+} from '../factories';
 import { PoolProvider } from '../providers';
-import {
-  AccessTokenRepositoryPostgresql,
-  RefreshTokenRepositoryPostgresql,
-} from '../repositories/tokenRepositories';
-import { UserRepositoryPostgresql } from '../repositories/userRepository';
-import { UserService } from '../services';
-import {
-  AccessTokenService,
-  RefreshTokenService,
-} from '../services/tokenServices';
-import { DatabaseConnection } from '../types';
 
 export class AuthController {
   static async createBothTokens(
@@ -20,14 +14,14 @@ export class AuthController {
     next: NextFunction
   ) {
     try {
-      const userService = AuthController.getUserService();
+      const userService = UserServiceFactory.create();
       const email = req.query.email?.toString() ?? '';
       const password = req.query.password?.toString() ?? '';
       if (!email || !password) throw new InvalidRequestError('NullCredentials');
       const userId = await userService.findAsync({ email, password });
       const client = await PoolProvider.pool.connect();
-      const refreshTokenService = AuthController.getRefreshTokenService(client);
-      const accessTokenService = AuthController.getAccessTokenService(client);
+      const refreshTokenService = RefreshTokenServiceFactory.create(client);
+      const accessTokenService = AccessTokenServiceFactory.create(client);
       try {
         client.query('BEGIN');
         const forbidRefreshTokensId =
@@ -69,8 +63,8 @@ export class AuthController {
       const refreshToken = req.params.refreshToken?.toString() ?? '';
       if (!refreshToken) throw new InvalidRequestError('NullRefreshToken');
       const client = await PoolProvider.pool.connect();
-      const refreshTokenService = AuthController.getRefreshTokenService(client);
-      const accessTokenService = AuthController.getAccessTokenService(client);
+      const refreshTokenService = RefreshTokenServiceFactory.create(client);
+      const accessTokenService = AccessTokenServiceFactory.create(client);
       const { id, parentId } = await refreshTokenService.verifyTokenAsync(
         refreshToken
       );
@@ -94,26 +88,5 @@ export class AuthController {
     } catch (err) {
       next(err);
     }
-  }
-
-  private static getRefreshTokenService(
-    connection: DatabaseConnection = PoolProvider.pool
-  ) {
-    const repository = new RefreshTokenRepositoryPostgresql(connection);
-    return new RefreshTokenService(repository);
-  }
-
-  private static getAccessTokenService(
-    connection: DatabaseConnection = PoolProvider.pool
-  ) {
-    const repository = new AccessTokenRepositoryPostgresql(connection);
-    return new AccessTokenService(repository);
-  }
-
-  private static getUserService(
-    connection: DatabaseConnection = PoolProvider.pool
-  ) {
-    const repository = new UserRepositoryPostgresql(connection);
-    return new UserService(repository);
   }
 }

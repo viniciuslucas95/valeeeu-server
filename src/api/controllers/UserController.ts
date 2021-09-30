@@ -1,16 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { PoolProvider } from '../providers';
 import { InvalidRequestError } from '../errors/InvalidRequestError';
-import { UserRepositoryPostgresql } from '../repositories/userRepository';
-import { UserService } from '../services';
-import { DatabaseConnection } from '../types';
+import { UserServiceFactory } from '../factories';
 
 export class UserController {
   private static readonly nullIdError = new InvalidRequestError('NullId');
 
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const service = UserController.getService();
+      const service = UserServiceFactory.create();
       const email = req.body.email?.toString() ?? '';
       const password = req.body.password?.toString() ?? '';
       if (!email || !password) throw new InvalidRequestError('NullCredentials');
@@ -27,7 +24,7 @@ export class UserController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const service = UserController.getService();
+      const service = UserServiceFactory.create();
       const id = req.params.id;
       const email = req.body.email?.toString() ?? '';
       const password = req.body.password?.toString() ?? '';
@@ -42,7 +39,7 @@ export class UserController {
 
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      const service = UserController.getService();
+      const service = UserServiceFactory.create();
       const id = req.params.id;
       if (!id) throw UserController.nullIdError;
       await service.deleteAsync(id);
@@ -50,12 +47,5 @@ export class UserController {
     } catch (err) {
       next(err);
     }
-  }
-
-  private static getService(
-    connection: DatabaseConnection = PoolProvider.pool
-  ) {
-    const repository = new UserRepositoryPostgresql(connection);
-    return new UserService(repository);
   }
 }
