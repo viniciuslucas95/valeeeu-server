@@ -1,7 +1,7 @@
 import { PoolProvider } from '../providers';
 import { RefreshTokenRepositoryPostgresql } from '../repositories/tokenRepositories';
 import { RefreshTokenService } from '../services/tokenServices';
-import { DatabaseConnection } from '../types';
+import { DatabaseConnection } from '../dataTypes/types';
 
 export class RefreshTokenServiceFactory {
   static create(connection: DatabaseConnection = PoolProvider.pool) {

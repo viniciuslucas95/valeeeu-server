@@ -3,7 +3,7 @@ import {
   ITokenForbiddenAllResultDto,
 } from '../../entities/dtos/token';
 import { RefreshToken } from '../../entities/models/tokens';
-import { DatabaseConnection } from '../../types';
+import { DatabaseConnection } from '../../dataTypes/types';
 import { ITokenRepository } from './interfaces';
 
 export class RefreshTokenRepositoryPostgresql

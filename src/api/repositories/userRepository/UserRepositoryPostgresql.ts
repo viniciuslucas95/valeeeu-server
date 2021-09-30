@@ -4,7 +4,7 @@ import {
   IUserUpdateDto,
 } from '../../entities/dtos/user';
 import { User } from '../../entities/models';
-import { DatabaseConnection } from '../../types';
+import { DatabaseConnection } from '../../dataTypes/types';
 import { IUserRepository } from './interfaces';
 
 export class UserRepositoryPostgresql implements IUserRepository {
