@@ -1,0 +1,1 @@
+export { IWorkerProfileRepository } from './IWorkerProfileRepository';

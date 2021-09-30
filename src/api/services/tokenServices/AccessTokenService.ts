@@ -5,22 +5,22 @@ import { AccessToken } from '../../entities/models/tokens';
 import { BaseTokenService } from './BaseTokenService';
 
 export class AccessTokenService extends BaseTokenService<AccessToken> {
-  protected createNewToken(
-    newId: string,
+  protected async createNewToken(
     parentId: string,
     token: string
-  ): AccessToken {
+  ): Promise<AccessToken> {
+    const { newId, currentDate } = await this.generateBaseModel();
     return {
       id: newId,
       token,
       isForbidden: false,
       refreshTokenId: parentId,
-      createdAt: this.getCurrentDate(),
-      updatedAt: this.getCurrentDate(),
+      createdAt: currentDate,
+      updatedAt: currentDate,
     };
   }
 
-  protected verifyToken(token: string): ITokenPayloadResultDto {
+  verifyToken(token: string): string {
     const { id } = <JwtPayload>(
       verify(
         token,
@@ -32,10 +32,9 @@ export class AccessTokenService extends BaseTokenService<AccessToken> {
   }
 
   protected createJwtToken(payload: ITokenPayloadResultDto): string {
-    return sign(
-      payload,
-      EnvironmentConfig.accessTokenSecret,
-      JwtConfig.accessTokenOptions
-    );
+    return sign(payload, EnvironmentConfig.accessTokenSecret, {
+      jwtid: this.generateNewId(),
+      ...JwtConfig.accessTokenOptions,
+    });
   }
 }

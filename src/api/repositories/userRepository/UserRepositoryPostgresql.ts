@@ -4,12 +4,13 @@ import {
   IUserUpdateDto,
 } from '../../entities/dtos/user';
 import { User } from '../../entities/models';
-import { DatabaseConnection } from '../../dataTypes/types';
 import { IUserRepository } from './interfaces';
+import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
 
-export class UserRepositoryPostgresql implements IUserRepository {
-  constructor(private readonly connection: DatabaseConnection) {}
-
+export class UserRepositoryPostgresql
+  extends BaseRepositoryPostgresql
+  implements IUserRepository
+{
   async createAsync(data: User) {
     const { id, email, password, createdAt, updatedAt } = data;
     const query =

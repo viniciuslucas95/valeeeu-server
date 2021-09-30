@@ -1,4 +1,4 @@
-CREATE TABLE "user" (
+CREATE TABLE "user"(
 	id VARCHAR(32)
 		NOT NULL,
 	CONSTRAINT unique_user_id
@@ -17,7 +17,7 @@ CREATE TABLE "user" (
 		NOT NULL
 );
 
-create table refresh_token (
+create table refresh_token(
 	id VARCHAR(32)
 		NOT NULL,
 	CONSTRAINT unique_refresh_token_id
@@ -43,7 +43,7 @@ create table refresh_token (
 		NOT NULL
 );
 
-create table access_token (
+create table access_token(
 	id VARCHAR(32)
 		NOT NULL,
 	CONSTRAINT unique_access_token_id
@@ -62,6 +62,55 @@ create table access_token (
 		FOREIGN KEY(refresh_token_id)
 		REFERENCES refresh_token(id)
 		ON DELETE SET NULL
+		ON UPDATE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE
+		NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE
+		NOT NULL
+);
+
+CREATE TABLE worker_profile(
+	id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_worker_profile_id
+		UNIQUE(id),
+	CONSTRAINT pk_worker_profile
+		PRIMARY KEY(id),
+	name VARCHAR
+		NOT NULL,
+	job VARCHAR
+		NOT NULL,
+	description TEXT,
+	user_id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT fk_worker_profile_user
+		FOREIGN KEY(user_id)
+		REFERENCES "user"(id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE
+		NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE
+		NOT NULL
+);
+
+CREATE TABLE tag(
+	id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_tag_id
+		UNIQUE(id),
+	CONSTRAINT pk_tag
+		PRIMARY KEY(id),
+	name VARCHAR
+		NOT NULL,
+	CONSTRAINT unique_tag_name
+		UNIQUE(name),
+	worker_profile_id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT fk_tag_worker_profile
+		FOREIGN KEY(worker_profile_id)
+		REFERENCES worker_profile(id)
+		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	created_at TIMESTAMP WITH TIME ZONE
 		NOT NULL,

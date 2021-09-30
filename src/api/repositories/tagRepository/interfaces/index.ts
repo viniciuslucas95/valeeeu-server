@@ -1,0 +1,1 @@
+export { ITagRepository } from './ITagRepository';

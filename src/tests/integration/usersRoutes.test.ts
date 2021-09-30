@@ -18,15 +18,15 @@ beforeAll(() => {
   };
 });
 
-describe('User routes should', () => {
+describe('Users routes should', () => {
   describe('succeed on', () => {
-    test('create a new user', async () => {
+    test('creating a new user', async () => {
       const { status, data } = await axios.post(url, user, axiosConfig);
       userId = data.id;
       expect(status).toBe(201);
     });
 
-    test('update user', async () => {
+    test('updating user', async () => {
       (user.email = email()), (user.password = password());
       const { status } = await axios.patch(
         `${url}/${userId}`,
@@ -36,7 +36,7 @@ describe('User routes should', () => {
       expect(status).toBe(204);
     });
 
-    test('delete user', async () => {
+    test('deleting user', async () => {
       await axios.delete(`${url}/${userId}`, axiosConfig);
     });
   });

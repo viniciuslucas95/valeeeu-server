@@ -26,9 +26,11 @@ export class AuthController {
         client.query('BEGIN');
         const forbidRefreshTokensId =
           await refreshTokenService.forbidAllTokensAsync(userId);
-        forbidRefreshTokensId.forEach(async ({ id: refreshTokenId }) => {
-          await accessTokenService.forbidAllTokensAsync(refreshTokenId);
-        });
+        for (let i = 0; i < forbidRefreshTokensId.length; i++) {
+          await accessTokenService.forbidAllTokensAsync(
+            forbidRefreshTokensId[i].id
+          );
+        }
         const { token: refreshToken, id: refreshTokenId } =
           await refreshTokenService.createAsync({
             parentId: userId,
@@ -65,15 +67,14 @@ export class AuthController {
       const client = await PoolProvider.pool.connect();
       const refreshTokenService = RefreshTokenServiceFactory.create(client);
       const accessTokenService = AccessTokenServiceFactory.create(client);
-      const { id, parentId } = await refreshTokenService.verifyTokenAsync(
-        refreshToken
-      );
+      const { id: refreshTokenId, parentId: userId } =
+        await refreshTokenService.verifyTokenAsync(refreshToken);
       try {
         client.query('BEGIN');
-        await accessTokenService.forbidAllTokensAsync(id);
+        await accessTokenService.forbidAllTokensAsync(refreshTokenId);
         const { token: accessToken } = await accessTokenService.createAsync({
-          parentId: id,
-          userId: parentId,
+          parentId: refreshTokenId,
+          userId,
         });
         client.query('COMMIT');
         res.status(200).json({

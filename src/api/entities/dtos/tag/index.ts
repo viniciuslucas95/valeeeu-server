@@ -1,0 +1,1 @@
+export { ITagCreationDto } from './ITagCreationDto';

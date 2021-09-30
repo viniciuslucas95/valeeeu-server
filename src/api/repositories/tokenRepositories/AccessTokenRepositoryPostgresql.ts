@@ -3,14 +3,13 @@ import {
   ITokenForbiddenAllResultDto,
 } from '../../entities/dtos/token';
 import { AccessToken } from '../../entities/models/tokens';
-import { DatabaseConnection } from '../../dataTypes/types';
 import { ITokenRepository } from './interfaces';
+import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
 
 export class AccessTokenRepositoryPostgresql
+  extends BaseRepositoryPostgresql
   implements ITokenRepository<AccessToken>
 {
-  constructor(private readonly connection: DatabaseConnection) {}
-
   async createAsync(data: AccessToken) {
     const { id, createdAt, updatedAt, token, isForbidden, refreshTokenId } =
       data;

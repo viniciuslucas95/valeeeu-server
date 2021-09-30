@@ -17,7 +17,6 @@ export class UserController {
       });
       res.status(201).json({ id });
     } catch (err) {
-      console.error(err);
       next(err);
     }
   }

@@ -5,22 +5,22 @@ import { RefreshToken } from '../../entities/models/tokens';
 import { BaseTokenService } from './BaseTokenService';
 
 export class RefreshTokenService extends BaseTokenService<RefreshToken> {
-  protected createNewToken(
-    newId: string,
+  protected async createNewToken(
     parentId: string,
     token: string
-  ): RefreshToken {
+  ): Promise<RefreshToken> {
+    const { newId, currentDate } = await this.generateBaseModel();
     return {
       id: newId,
       token,
       isForbidden: false,
       userId: parentId,
-      createdAt: this.getCurrentDate(),
-      updatedAt: this.getCurrentDate(),
+      createdAt: currentDate,
+      updatedAt: currentDate,
     };
   }
 
-  protected verifyToken(token: string): ITokenPayloadResultDto {
+  verifyToken(token: string): string {
     const { id } = <JwtPayload>(
       verify(
         token,
@@ -32,10 +32,9 @@ export class RefreshTokenService extends BaseTokenService<RefreshToken> {
   }
 
   protected createJwtToken(payload: ITokenPayloadResultDto): string {
-    return sign(
-      payload,
-      EnvironmentConfig.refreshTokenSecret,
-      JwtConfig.refreshTokenOptions
-    );
+    return sign(payload, EnvironmentConfig.refreshTokenSecret, {
+      jwtid: this.generateNewId(),
+      ...JwtConfig.refreshTokenOptions,
+    });
   }
 }

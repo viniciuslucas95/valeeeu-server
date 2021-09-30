@@ -1,0 +1,1 @@
+export { TagRepositoryPostgresql } from './TagRepositoryPostgresql';

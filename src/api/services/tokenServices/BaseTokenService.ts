@@ -26,17 +26,16 @@ export abstract class BaseTokenService<
     const { parentId, userId } = data;
     const token = this.createJwtToken({ id: userId });
     await this.checkTokenExistanceAsync(token);
-    const newId = await this.generateNewIdAsync();
-    const newToken: T = this.createNewToken(newId, parentId, token);
+    const newToken: T = await this.createNewToken(parentId, token);
     await this.tokenRepository.createAsync(newToken);
     return {
-      id: newId,
+      id: newToken.id,
       token,
     };
   }
 
   async verifyTokenAsync(token: string): Promise<ITokenVerifyResultDto> {
-    const { id: userId } = this.verifyToken(token);
+    const userId = this.verifyToken(token);
     const refreshToken = await this.tokenRepository.findByTokenAsync(token);
     if (!refreshToken) throw this.tokenNotFoundError;
     if (refreshToken.isForbidden) throw this.forbiddenTokenError;
@@ -55,13 +54,12 @@ export abstract class BaseTokenService<
     if (result) throw this.tokenAlreadyExistsError;
   }
 
-  protected abstract verifyToken(token: string): ITokenPayloadResultDto;
+  protected abstract verifyToken(token: string): string;
 
   protected abstract createNewToken(
-    newId: string,
     parentId: string,
     token: string
-  ): T;
+  ): Promise<T>;
 
   protected abstract createJwtToken(payload: ITokenPayloadResultDto): string;
 }

@@ -24,9 +24,8 @@ export class UserService extends BaseService<User> {
     this.validateEmail(email);
     this.validatePassword(password);
     await this.checkEmailExistanceAsync(email);
-    const newId = await this.generateNewIdAsync();
+    const { newId, currentDate } = await this.generateBaseModel();
     const hashedPassword = await this.hashPasswordAsync(password);
-    const currentDate = this.getCurrentDate();
     const newUser: User = {
       id: newId,
       email,
