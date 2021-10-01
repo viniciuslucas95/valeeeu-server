@@ -14,21 +14,21 @@ export class AuthController {
     next: NextFunction
   ) {
     try {
-      const userService = UserServiceFactory.create();
       const email = req.query.email?.toString() ?? '';
       const password = req.query.password?.toString() ?? '';
       if (!email || !password) throw new InvalidRequestError('NullCredentials');
-      const userId = await userService.findAsync({ email, password });
+      const userService = UserServiceFactory.create();
+      const userId = await userService.logInAsync({ email, password });
       const client = await PoolProvider.pool.connect();
       const refreshTokenService = RefreshTokenServiceFactory.create(client);
       const accessTokenService = AccessTokenServiceFactory.create(client);
       try {
         client.query('BEGIN');
-        const forbidRefreshTokensId =
+        const forbiddenRefreshTokensId =
           await refreshTokenService.forbidAllTokensAsync(userId);
-        for (let i = 0; i < forbidRefreshTokensId.length; i++) {
+        for (let i = 0; i < forbiddenRefreshTokensId.length; i++) {
           await accessTokenService.forbidAllTokensAsync(
-            forbidRefreshTokensId[i].id
+            forbiddenRefreshTokensId[i].id
           );
         }
         const { token: refreshToken, id: refreshTokenId } =

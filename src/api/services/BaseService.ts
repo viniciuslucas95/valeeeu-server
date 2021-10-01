@@ -3,7 +3,7 @@ import { BaseModel } from '../entities/models';
 import { IRepository } from '../repositories/interfaces';
 
 export abstract class BaseService<T extends BaseModel> {
-  constructor(private readonly repository: IRepository<T>) {}
+  constructor(private readonly baseRepository: IRepository<T>) {}
 
   protected async generateBaseModel() {
     const newId = await this.generateNewIdAsync();
@@ -21,12 +21,8 @@ export abstract class BaseService<T extends BaseModel> {
 
   private async generateNewIdAsync() {
     let newId = this.generateNewId();
-    while (await this.checkIdExistanceAsync(newId))
+    while (await this.baseRepository.checkExistanceByIdAsync(newId))
       newId = this.generateNewId();
     return newId;
-  }
-
-  private async checkIdExistanceAsync(id: string) {
-    return await this.repository.checkIdExistenceAsync(id);
   }
 }

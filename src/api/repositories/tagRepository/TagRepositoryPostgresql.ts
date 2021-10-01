@@ -19,7 +19,7 @@ export class TagRepositoryPostgresql
     ]);
   }
 
-  async checkIdExistenceAsync(id: string): Promise<boolean> {
+  async checkExistanceByIdAsync(id: string) {
     const query = 'SELECT id FROM tag WHERE id = $1;';
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;

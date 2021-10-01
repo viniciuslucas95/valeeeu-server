@@ -1,5 +1,5 @@
-import { IUserCreationDto } from './IUserCreationDto';
-
-export interface IUserUpdateDto extends IUserCreationDto {
+export interface IUserUpdateDto {
+  email: string;
+  password: string;
   updatedAt: Date;
 }

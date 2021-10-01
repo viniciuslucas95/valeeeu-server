@@ -1,44 +1,28 @@
-import faker, { name, internet, lorem } from 'faker';
+import { name, lorem } from 'faker';
 import axios, { AxiosRequestConfig } from 'axios';
 import { EnvironmentConfig } from '../../configs';
-import { IUserCreationDto } from '../../api/entities/dtos/user';
-import { IWorkerProfileCreationDto } from '../../api/entities/dtos/workerProfile';
-
-interface IHaveTags {
-  tags: any;
-}
+import {
+  createUserAsync,
+  getAccessTokenAsync,
+  getAxiosConfig,
+} from '../helpers';
 
 const { findName, jobTitle, firstName } = name;
-const { email, password } = internet;
 const { text } = lorem;
 const url = `http://localhost:${EnvironmentConfig.serverPort}/workers`;
-const axiosConfig: AxiosRequestConfig = {
-  validateStatus: null,
-};
-let user: IUserCreationDto;
-let userId: string;
-let workerProfile: IWorkerProfileCreationDto & IHaveTags;
+let axiosConfig: AxiosRequestConfig;
+let workerProfile: any;
 let accessToken: string;
 
 beforeAll(async () => {
-  const usersUrl = `http://localhost:${EnvironmentConfig.serverPort}/users`;
-  user = {
-    email: email(),
-    password: password(),
-  };
-  const { data: userData } = await axios.post(usersUrl, user, axiosConfig);
-  const authUrl = `http://localhost:${EnvironmentConfig.serverPort}/auth`;
-  const { data: authData } = await axios.get(
-    `${authUrl}?email=${user.email}&password=${user.password}`,
-    axiosConfig
-  );
-  accessToken = authData.accessToken;
-  userId = userData.id;
+  const { id, email, password } = await createUserAsync();
+  accessToken = await getAccessTokenAsync(email, password);
+  axiosConfig = getAxiosConfig(accessToken);
   workerProfile = {
     name: findName(),
     job: jobTitle(),
     description: text(),
-    userId,
+    userId: id,
     tags: [firstName(), firstName(), firstName()],
   };
 });
@@ -46,12 +30,7 @@ beforeAll(async () => {
 describe('Workers routes should', () => {
   describe('succeed on', () => {
     test('creating a new worker profile', async () => {
-      const { status } = await axios.post(url, workerProfile, {
-        headers: {
-          authorization: 'Bearer ' + accessToken,
-        },
-        ...axiosConfig,
-      });
+      const { status } = await axios.post(url, workerProfile, axiosConfig);
       expect(status).toBe(201);
     });
   });

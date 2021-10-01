@@ -1,6 +1,7 @@
 import {
   IUserCreationDto,
   IUserReadByEmailResultDto,
+  IUserReadByIdResultDto,
   IUserUpdateDto,
 } from '../../entities/dtos/user';
 import { User } from '../../entities/models';
@@ -36,9 +37,12 @@ export class UserRepositoryPostgresql
     await this.connection.query(query, [id]);
   }
 
-  async findByIdAsync(id: string): Promise<IUserCreationDto | undefined> {
+  async findByIdAsync(id: string): Promise<IUserReadByIdResultDto | undefined> {
     const query = 'SELECT email, password FROM "user" WHERE id = $1;';
-    const { rows } = await this.connection.query<IUserCreationDto>(query, [id]);
+    const { rows } = await this.connection.query<IUserReadByIdResultDto>(
+      query,
+      [id]
+    );
     return rows[0] ?? undefined;
   }
 
@@ -53,13 +57,13 @@ export class UserRepositoryPostgresql
     return rows[0] ?? undefined;
   }
 
-  async checkIdExistenceAsync(id: string) {
+  async checkExistanceByIdAsync(id: string) {
     const query = 'SELECT id FROM "user" WHERE id = $1;';
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
-  async checkEmailExistenceAsync(email: string) {
+  async checkExistanceByEmailAsync(email: string) {
     const query = 'SELECT email FROM "user" WHERE email = $1;';
     const { rows } = await this.connection.query(query, [email]);
     return rows[0] ? true : false;

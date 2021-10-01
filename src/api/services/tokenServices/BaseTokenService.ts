@@ -12,12 +12,6 @@ import {
 export abstract class BaseTokenService<
   T extends BaseToken
 > extends BaseService<T> {
-  private readonly tokenAlreadyExistsError = new ConflictError(
-    'TokenAlreadyExists'
-  );
-  private readonly tokenNotFoundError = new ServerError('TokenNotFound');
-  private readonly forbiddenTokenError = new ForbiddenError('ForbiddenToken');
-
   constructor(private readonly tokenRepository: ITokenRepository<T>) {
     super(tokenRepository);
   }
@@ -25,7 +19,7 @@ export abstract class BaseTokenService<
   async createAsync(data: ITokenCreationDto): Promise<ITokenCreationResultDto> {
     const { parentId, userId } = data;
     const token = this.createJwtToken({ id: userId });
-    await this.checkTokenExistanceAsync(token);
+    await this.checkExistanceByTokenAsync(token);
     const newToken: T = await this.createNewToken(parentId, token);
     await this.tokenRepository.createAsync(newToken);
     return {
@@ -37,8 +31,8 @@ export abstract class BaseTokenService<
   async verifyTokenAsync(token: string): Promise<ITokenVerifyResultDto> {
     const userId = this.verifyToken(token);
     const refreshToken = await this.tokenRepository.findByTokenAsync(token);
-    if (!refreshToken) throw this.tokenNotFoundError;
-    if (refreshToken.isForbidden) throw this.forbiddenTokenError;
+    if (!refreshToken) throw new ServerError('TokenNotFound');
+    if (refreshToken.isForbidden) throw new ForbiddenError('ForbiddenToken');
     return {
       id: refreshToken.id,
       parentId: userId,
@@ -49,9 +43,9 @@ export abstract class BaseTokenService<
     return await this.tokenRepository.forbidAllTokens(parentId);
   }
 
-  private async checkTokenExistanceAsync(token: string) {
-    const result = await this.tokenRepository.checkTokenExistanceAsync(token);
-    if (result) throw this.tokenAlreadyExistsError;
+  private async checkExistanceByTokenAsync(token: string) {
+    const result = await this.tokenRepository.checkExistanceByTokenAsync(token);
+    if (result) throw new ConflictError('TokenAlreadyExists');
   }
 
   protected abstract verifyToken(token: string): string;

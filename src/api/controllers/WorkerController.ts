@@ -8,18 +8,9 @@ import { RequestHandler } from './helpers';
 export class WorkerController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const requestHandler = new RequestHandler();
-      const userId = requestHandler.verifyAccessToken(req);
-      const name = req.body.name?.toString() ?? '';
-      const job = req.body.job?.toString() ?? '';
-      const description = req.body.description?.toString() ?? '';
-      const tags = req.body.tags ?? [];
-      if (!tags.map) throw new InvalidRequestError('WrongTagsFormat');
-      const formattedTags: string[] = tags.map((tag: any) => tag.toString());
-      if (formattedTags.length === 0)
-        throw new InvalidRequestError('NoTagsSent');
-      if (!name) throw new InvalidRequestError('NullName');
-      if (!job) throw new InvalidRequestError('NullJob');
+      const userId = await RequestHandler.verifyAccessTokenAsync(req);
+      const { name, job, description, tags } =
+        WorkerController.getRequestData(req);
       const client = await PoolProvider.pool.connect();
       const workerProfileService = WorkerProfileServiceFactory.create(client);
       const tagService = TagServiceFactory.create(client);
@@ -31,9 +22,9 @@ export class WorkerController {
           userId,
           description,
         });
-        for (let i = 0; i < formattedTags.length; i++) {
+        for (let i = 0; i < tags.length; i++) {
           await tagService.createAsync({
-            name: formattedTags[i].toLocaleLowerCase(),
+            name: tags[i].toLocaleLowerCase(),
             workerProfileId,
           });
         }
@@ -48,5 +39,23 @@ export class WorkerController {
     } catch (err) {
       next(err);
     }
+  }
+
+  private static getRequestData(req: Request) {
+    const name = req.body.name?.toString() ?? '';
+    if (!name) throw new InvalidRequestError('NullName');
+    const job = req.body.job?.toString() ?? '';
+    if (!job) throw new InvalidRequestError('NullJob');
+    const description = req.body.description?.toString() ?? '';
+    const tags = WorkerController.getTags(req);
+    return { name, job, description, tags };
+  }
+
+  private static getTags(req: Request) {
+    const tags = req.body.tags ?? [];
+    if (!tags.map) throw new InvalidRequestError('WrongTagsFormat');
+    const formattedTags: string[] = tags.map((tag: any) => tag.toString());
+    if (formattedTags.length === 0) throw new InvalidRequestError('NoTagsSent');
+    return formattedTags ?? [];
   }
 }

@@ -51,15 +51,21 @@ export class RefreshTokenRepositoryPostgresql
     return rows;
   }
 
-  async checkIdExistenceAsync(id: string): Promise<boolean> {
+  async findByIdAsync(id: string): Promise<boolean> {
     const query = 'SELECT id FROM refresh_token WHERE id = $1;';
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
-  async checkTokenExistanceAsync(token: string): Promise<boolean> {
+  async checkExistanceByTokenAsync(token: string): Promise<boolean> {
     const query = 'SELECT token FROM refresh_token WHERE token = $1;';
     const { rows } = await this.connection.query(query, [token]);
+    return rows[0] ? true : false;
+  }
+
+  async checkExistanceByIdAsync(id: string) {
+    const query = 'SELECT id FROM refresh_token WHERE id = $1;';
+    const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 }
