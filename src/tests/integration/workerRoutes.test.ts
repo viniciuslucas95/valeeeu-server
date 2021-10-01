@@ -15,14 +15,13 @@ let axiosConfig: AxiosRequestConfig;
 let workerProfile: any;
 
 beforeAll(async () => {
-  const { id, email, password } = await createUserAsync();
+  const { email, password } = await createUserAsync();
   accessToken = await getAccessTokenAsync(email, password);
   axiosConfig = getAxiosConfig(accessToken);
   workerProfile = {
     name: findName(),
     job: jobTitle(),
     description: text(),
-    userId: id,
     tags: [firstName(), firstName(), firstName()],
   };
 });
@@ -32,6 +31,19 @@ describe('Worker routes should', () => {
     test('creating a new worker profile', async () => {
       const { status } = await axios.post(url, workerProfile, axiosConfig);
       expect(status).toBe(201);
+    });
+
+    test('updating worker profile', async () => {
+      const workerProfileUpdate = {
+        description: text(),
+        tags: [firstName(), firstName()],
+      };
+      const { status } = await axios.patch(
+        url,
+        workerProfileUpdate,
+        axiosConfig
+      );
+      expect(status).toBe(204);
     });
   });
 });

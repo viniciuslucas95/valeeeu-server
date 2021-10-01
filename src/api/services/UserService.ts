@@ -62,14 +62,8 @@ export class UserService extends BaseService<User> {
   }
 
   async deleteAsync(id: string) {
-    await this.findByIdAsync(id);
+    await this.checkExistanceByIdAsync(id);
     await this.repository.deleteAsync(id);
-  }
-
-  async findByIdAsync(id: string) {
-    const user = await this.repository.findByIdAsync(id);
-    if (!user) throw new InvalidRequestError('UserNotFound');
-    return user;
   }
 
   async checkExistanceByIdAsync(id: string) {
@@ -84,6 +78,12 @@ export class UserService extends BaseService<User> {
     const user = await this.findByEmailAsync(email);
     await this.checkPasswordAsync(password, user.password);
     return user.id;
+  }
+
+  private async findByIdAsync(id: string) {
+    const user = await this.repository.findByIdAsync(id);
+    if (!user) throw new ServerError('UserNotFound');
+    return user;
   }
 
   private async checkEmailExistanceAsync(email: string) {

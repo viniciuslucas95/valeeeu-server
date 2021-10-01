@@ -39,10 +39,8 @@ export class CustomerProfileService extends BaseService<CustomerProfile> {
     const customerProfile = await this.repository.findByUserIdAsync(userId);
     if (!customerProfile)
       throw new InvalidRequestError('CustomerProfileDoesNotExist');
-    if (name === customerProfile.name)
-      throw new InvalidRequestError('SameNameSent');
     await this.repository.updateAsync(customerProfile.id, {
-      name: name,
+      name,
       updatedAt: this.getCurrentDate(),
     });
   }

@@ -6,6 +6,7 @@ export class WorkerProfileRouter {
     const router = Router();
     const url = '/workers';
     router.post(url, WorkerController.create);
+    router.patch(url, WorkerController.update);
     return router;
   }
 }

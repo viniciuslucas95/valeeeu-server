@@ -14,12 +14,11 @@ let axiosConfig: AxiosRequestConfig;
 let customerProfile: any;
 
 beforeAll(async () => {
-  const { id, email, password } = await createUserAsync();
+  const { email, password } = await createUserAsync();
   accessToken = await getAccessTokenAsync(email, password);
   axiosConfig = getAxiosConfig(accessToken);
   customerProfile = {
     name: findName(),
-    userId: id,
   };
 });
 
@@ -28,6 +27,18 @@ describe('Customer routes should', () => {
     test('creating a new customer profile', async () => {
       const { status } = await axios.post(url, customerProfile, axiosConfig);
       expect(status).toBe(201);
+    });
+
+    test('updating customer profile', async () => {
+      const customerProfileUpdate = {
+        name: findName(),
+      };
+      const { status } = await axios.patch(
+        url,
+        customerProfileUpdate,
+        axiosConfig
+      );
+      expect(status).toBe(204);
     });
   });
 });

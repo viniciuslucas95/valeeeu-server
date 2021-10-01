@@ -1,14 +1,11 @@
 import { Request } from 'express';
 import { ForbiddenError } from '../../errors';
-import { AccessTokenServiceFactory, UserServiceFactory } from '../../factories';
+import { AccessTokenServiceFactory } from '../../factories';
 
 export class RequestHandler {
   async verifyAccessTokenAsync(token: string) {
     const accessTokenService = AccessTokenServiceFactory.create();
-    const id = accessTokenService.verifyToken(token);
-    const userService = UserServiceFactory.create();
-    await userService.checkExistanceByIdAsync(id);
-    return id;
+    return accessTokenService.verifyToken(token);
   }
 
   static async verifyAccessTokenAsync(req: Request): Promise<string> {

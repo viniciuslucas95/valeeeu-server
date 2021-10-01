@@ -69,6 +69,8 @@ export class AuthController {
       const accessTokenService = AccessTokenServiceFactory.create(client);
       const { id: refreshTokenId, parentId: userId } =
         await refreshTokenService.verifyTokenAsync(refreshToken);
+      const userService = UserServiceFactory.create();
+      await userService.checkExistanceByIdAsync(userId);
       try {
         client.query('BEGIN');
         await accessTokenService.forbidAllTokensAsync(refreshTokenId);

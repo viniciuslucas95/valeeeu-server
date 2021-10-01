@@ -26,7 +26,7 @@ export class CustomerProfileRepositoryPostgresql
   async updateAsync(id: string, data: ICustomerProfileUpdateDto) {
     const { updatedAt, name } = data;
     const query =
-      'UPDATE customer_profile SET name = $1, updated_at = $2 WHERE = $3;';
+      'UPDATE customer_profile SET name = $1, updated_at = $2 WHERE id = $3;';
     await this.connection.query(query, [name, updatedAt, id]);
   }
 

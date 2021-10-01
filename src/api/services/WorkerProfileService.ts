@@ -49,5 +49,6 @@ export class WorkerProfileService extends BaseService<WorkerProfile> {
       description: updatedDescription ?? workerProfile.description,
       updatedAt: this.getCurrentDate(),
     });
+    return workerProfile.id;
   }
 }

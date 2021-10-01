@@ -6,6 +6,7 @@ export class CustomerProfileRouter {
     const router = Router();
     const url = '/customers';
     router.post(url, CustomerController.create);
+    router.patch(url, CustomerController.update);
     return router;
   }
 }

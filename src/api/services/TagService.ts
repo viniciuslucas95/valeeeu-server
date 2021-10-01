@@ -5,8 +5,8 @@ import { ITagRepository } from '../repositories/tagRepository/interfaces';
 import { BaseService } from './BaseService';
 
 export class TagService extends BaseService<Tag> {
-  constructor(private readonly tagRepository: ITagRepository) {
-    super(tagRepository);
+  constructor(private readonly repository: ITagRepository) {
+    super(repository);
   }
 
   async createAsync(data: ITagCreationDto) {
@@ -20,8 +20,12 @@ export class TagService extends BaseService<Tag> {
       createdAt: currentDate,
       updatedAt: currentDate,
     };
-    await this.tagRepository.createAsync(newTag);
+    await this.repository.createAsync(newTag);
     return newId;
+  }
+
+  async deleteAllTagsAsync(workerProfileId: string) {
+    await this.repository.deleteAllTagsAsync(workerProfileId);
   }
 
   private validateName(name: string) {

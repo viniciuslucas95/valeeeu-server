@@ -19,6 +19,11 @@ export class TagRepositoryPostgresql
     ]);
   }
 
+  async deleteAllTagsAsync(workerProfileId: string) {
+    const query = 'DELETE FROM tag WHERE worker_profile_id = $1;';
+    await this.connection.query(query, [workerProfileId]);
+  }
+
   async checkExistanceByIdAsync(id: string) {
     const query = 'SELECT id FROM tag WHERE id = $1;';
     const { rows } = await this.connection.query(query, [id]);
