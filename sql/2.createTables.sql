@@ -117,3 +117,25 @@ CREATE TABLE tag(
 	updated_at TIMESTAMP WITH TIME ZONE
 		NOT NULL
 );
+
+CREATE TABLE customer_profile(
+	id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_customer_profile_id
+		UNIQUE(id),
+	CONSTRAINT pk_customer_profile
+		PRIMARY KEY(id),
+	name VARCHAR
+		NOT NULL,
+	user_id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT fk_customer_profile_user
+		FOREIGN KEY(user_id)
+		REFERENCES "user"(id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE
+		NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE
+		NOT NULL
+);

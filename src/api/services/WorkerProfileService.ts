@@ -8,16 +8,15 @@ import { IWorkerProfileRepository } from '../repositories/workerProfileRepositor
 import { BaseService } from './BaseService';
 
 export class WorkerProfileService extends BaseService<WorkerProfile> {
-  constructor(
-    private readonly workerProfileRepository: IWorkerProfileRepository
-  ) {
-    super(workerProfileRepository);
+  constructor(private readonly repository: IWorkerProfileRepository) {
+    super(repository);
   }
 
   async createAsync(data: IWorkerProfileCreationDto) {
     const { job, name, userId, description } = data;
-    const workerProfile =
-      await this.workerProfileRepository.checkExistanceByUserIdAsync(userId);
+    const workerProfile = await this.repository.checkExistanceByUserIdAsync(
+      userId
+    );
     if (workerProfile) throw new ConflictError('WorkerProfileAlreadyCreated');
     const { newId, currentDate } = await this.generateBaseModel();
     const newWorkerProfile: WorkerProfile = {
@@ -29,7 +28,7 @@ export class WorkerProfileService extends BaseService<WorkerProfile> {
       createdAt: currentDate,
       updatedAt: currentDate,
     };
-    await this.workerProfileRepository.createAsync(newWorkerProfile);
+    await this.repository.createAsync(newWorkerProfile);
     return newId;
   }
 
@@ -41,12 +40,10 @@ export class WorkerProfileService extends BaseService<WorkerProfile> {
     let updatedName = name ? name : undefined;
     let updatedJob = job ? job : undefined;
     let updatedDescription = description ? description : undefined;
-    const workerProfile = await this.workerProfileRepository.findByUserIdAsync(
-      userId
-    );
+    const workerProfile = await this.repository.findByUserIdAsync(userId);
     if (!workerProfile)
       throw new InvalidRequestError('WorkerProfileDoesNotExist');
-    await this.workerProfileRepository.updateAsync(workerProfile.id, {
+    await this.repository.updateAsync(workerProfile.id, {
       name: updatedName ?? workerProfile.name,
       job: updatedJob ?? workerProfile.job,
       description: updatedDescription ?? workerProfile.description,

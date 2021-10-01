@@ -20,7 +20,7 @@ beforeAll(() => {
   };
 });
 
-describe('Users routes should', () => {
+describe('User routes should', () => {
   describe('succeed on', () => {
     test('creating a new user', async () => {
       const { status, data } = await axios.post(url, user, axiosConfig);

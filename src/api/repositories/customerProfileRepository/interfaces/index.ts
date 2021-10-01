@@ -1,0 +1,1 @@
+export { ICustomerProfileRepository } from './ICustomerProfileRepository';
