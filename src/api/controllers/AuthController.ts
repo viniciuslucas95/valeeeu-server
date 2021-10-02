@@ -6,8 +6,9 @@ import {
   UserServiceFactory,
 } from '../factories';
 import { PoolProvider } from '../providers';
+import { BaseController } from './BaseController';
 
-export class AuthController {
+export class AuthController extends BaseController {
   static async createBothTokens(
     req: Request,
     res: Response,

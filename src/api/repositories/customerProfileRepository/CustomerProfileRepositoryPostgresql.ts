@@ -3,7 +3,7 @@ import {
   ICustomerProfileUpdateDto,
 } from '../../entities/dtos/customerProfile';
 import { CustomerProfile } from '../../entities/models/profiles';
-import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
+import { BaseRepositoryPostgresql } from '../bases';
 import { ICustomerProfileRepository } from './interfaces';
 
 export class CustomerProfileRepositoryPostgresql

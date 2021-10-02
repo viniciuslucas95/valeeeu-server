@@ -4,7 +4,7 @@ import {
 } from '../../entities/dtos/workerProfile';
 import { WorkerProfile } from '../../entities/models/profiles';
 import { ServerError } from '../../errors';
-import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
+import { BaseRepositoryPostgresql } from '../bases';
 import { IWorkerProfileRepository } from './interfaces';
 
 export class WorkerProfileRepositoryPostgresql
@@ -32,18 +32,6 @@ export class WorkerProfileRepositoryPostgresql
       'UPDATE worker_profile SET name = $1, job = $2, description = $3, updated_at = $4 WHERE id = $5;';
     await this.connection.query(query, [name, job, description, updatedAt, id]);
   }
-
-  // async findByUserIdAsync(
-  //   userId: string
-  // ): Promise<IWorkerProfileReadByUserIdResultDto | undefined> {
-  //   const query =
-  //     'SELECT id, name, job, description FROM worker_profile WHERE user_id = $1;';
-  //   const { rows } =
-  //     await this.connection.query<IWorkerProfileReadByUserIdResultDto>(query, [
-  //       userId,
-  //     ]);
-  //   return rows[0] ?? undefined;
-  // }
 
   async findByUserIdAsync<K extends keyof IWorkerProfileReadByUserIdResultDto>(
     userId: string,

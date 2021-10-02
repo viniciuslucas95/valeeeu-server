@@ -3,9 +3,8 @@ import {
   ITokenForbiddenAllResultDto,
 } from '../../entities/dtos/token';
 import { AccessToken } from '../../entities/models/tokens';
-
 import { ITokenRepository } from './interfaces';
-import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
+import { BaseRepositoryPostgresql } from '../bases';
 
 export class AccessTokenRepositoryPostgresql
   extends BaseRepositoryPostgresql

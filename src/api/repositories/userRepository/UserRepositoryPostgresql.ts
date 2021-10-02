@@ -1,12 +1,11 @@
 import {
-  IUserCreationDto,
   IUserReadByEmailResultDto,
   IUserReadByIdResultDto,
   IUserUpdateDto,
 } from '../../entities/dtos/user';
 import { User } from '../../entities/models';
 import { IUserRepository } from './interfaces';
-import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
+import { BaseRepositoryPostgresql } from '../bases';
 
 export class UserRepositoryPostgresql
   extends BaseRepositoryPostgresql

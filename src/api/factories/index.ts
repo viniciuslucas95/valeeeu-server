@@ -3,4 +3,3 @@ export { RefreshTokenServiceFactory } from './RefreshTokenServiceFactory';
 export { UserServiceFactory } from './UserServiceFactory';
 export { WorkerProfileServiceFactory } from './WorkerProfileServiceFactory';
 export { CustomerProfileServiceFactory } from './CustomerProfileServiceFactory';
-export { WorkerProfileImageServiceFactory } from './WorkerProfileImageServiceFactory';

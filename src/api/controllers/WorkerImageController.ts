@@ -1,43 +1,32 @@
 import { Request, Response, NextFunction } from 'express';
+import { UserServiceFactory, WorkerProfileServiceFactory } from '../factories';
 import {
-  UserServiceFactory,
-  WorkerProfileImageServiceFactory,
-  WorkerProfileServiceFactory,
-} from '../factories';
-import { PoolProvider } from '../providers';
-import { RequestHandler } from './helpers';
+  WorkerProfileImageDatabaseServiceFactory,
+  WorkerProfileImageDiskServiceFactory,
+} from '../factories/workerProfileImageServiceFactories';
+import { BaseController } from './BaseController';
 
-export class WorkerImageController {
+export class WorkerImageController extends BaseController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await WorkerImageController.verifyAccessTokenAsync(req);
+      const userId = await BaseController.verifyAccessTokenAsync(req);
       const userService = UserServiceFactory.create();
       await userService.checkExistanceByIdAsync(userId);
       const workerProfileService = WorkerProfileServiceFactory.create();
       const workerProfileId = await workerProfileService.getIdByUserIdAsync(
         userId
       );
-      const client = await PoolProvider.pool.connect();
-      const workerProfileImageService =
-        WorkerProfileImageServiceFactory.create(client);
-      try {
-        client.query('BEGIN');
-        await workerProfileImageService.createAsync(workerProfileId, req);
-        client.query('COMMIT');
-        res.sendStatus(201);
-      } catch (err) {
-        client.query('ROLLBACK');
-        throw err;
-      } finally {
-        client.release();
-      }
+      const workerProfileImageDatabaseService =
+        WorkerProfileImageDatabaseServiceFactory.create();
+      const workerProfileImageDiskService =
+        WorkerProfileImageDiskServiceFactory.create();
+      const { id } = await workerProfileImageDatabaseService.createAsync(
+        workerProfileId
+      );
+      await workerProfileImageDiskService.createAsync(id, req);
+      res.sendStatus(201);
     } catch (err) {
       next(err);
     }
-  }
-
-  private static async verifyAccessTokenAsync(req: Request) {
-    const requestHandler = new RequestHandler();
-    return await requestHandler.verifyAccessTokenAsync(req);
   }
 }

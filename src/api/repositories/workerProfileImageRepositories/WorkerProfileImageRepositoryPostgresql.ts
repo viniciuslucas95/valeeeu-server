@@ -1,5 +1,5 @@
 import { WorkerProfileImage } from '../../entities/models/images';
-import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
+import { BaseRepositoryPostgresql } from '../bases';
 import { IWorkerProfileImageRepository } from './interfaces';
 
 export class WorkerProfileImageRepositoryPostgresql

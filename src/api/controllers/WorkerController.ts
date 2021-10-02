@@ -3,12 +3,12 @@ import { InvalidRequestError } from '../errors/InvalidRequestError';
 import { UserServiceFactory, WorkerProfileServiceFactory } from '../factories';
 import { TagServiceFactory } from '../factories/TagServiceFactory';
 import { PoolProvider } from '../providers';
-import { RequestHandler } from './helpers';
+import { BaseController } from './BaseController';
 
-export class WorkerController {
+export class WorkerController extends BaseController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await WorkerController.verifyAccessTokenAsync(req);
+      const userId = await BaseController.verifyAccessTokenAsync(req);
       const userService = UserServiceFactory.create();
       await userService.checkExistanceByIdAsync(userId);
       const { name, job, description, tags } =
@@ -49,7 +49,7 @@ export class WorkerController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await WorkerController.verifyAccessTokenAsync(req);
+      const userId = await BaseController.verifyAccessTokenAsync(req);
       const userService = UserServiceFactory.create();
       await userService.checkExistanceByIdAsync(userId);
       const { name, job, description, tags } =
@@ -102,10 +102,5 @@ export class WorkerController {
     if (!tags.map) throw new InvalidRequestError('WrongTagsFormat');
     const formattedTags: string[] = tags.map((tag: any) => tag.toString());
     return formattedTags;
-  }
-
-  private static async verifyAccessTokenAsync(req: Request) {
-    const requestHandler = new RequestHandler();
-    return await requestHandler.verifyAccessTokenAsync(req);
   }
 }

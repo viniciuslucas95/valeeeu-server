@@ -4,7 +4,7 @@ import {
 } from '../../entities/dtos/token';
 import { RefreshToken } from '../../entities/models/tokens';
 import { ITokenRepository } from './interfaces';
-import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
+import { BaseRepositoryPostgresql } from '../bases';
 
 export class RefreshTokenRepositoryPostgresql
   extends BaseRepositoryPostgresql

@@ -1,5 +1,5 @@
 import { Tag } from '../../entities/models';
-import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
+import { BaseRepositoryPostgresql } from '../bases';
 import { ITagRepository } from './interfaces';
 
 export class TagRepositoryPostgresql
