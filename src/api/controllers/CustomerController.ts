@@ -9,7 +9,7 @@ import { RequestHandler } from './helpers';
 export class CustomerController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await RequestHandler.verifyAccessTokenAsync(req);
+      const userId = await CustomerController.verifyAccessTokenAsync(req);
       const userService = UserServiceFactory.create();
       await userService.checkExistanceByIdAsync(userId);
       const { name } = CustomerController.getRequestData(req);
@@ -26,7 +26,7 @@ export class CustomerController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await RequestHandler.verifyAccessTokenAsync(req);
+      const userId = await CustomerController.verifyAccessTokenAsync(req);
       const userService = UserServiceFactory.create();
       await userService.checkExistanceByIdAsync(userId);
       const { name } = CustomerController.getRequestData(req);
@@ -44,5 +44,10 @@ export class CustomerController {
     const name = req.body.name?.toString() ?? '';
     if (!name) throw new InvalidRequestError('NullName');
     return { name };
+  }
+
+  private static async verifyAccessTokenAsync(req: Request) {
+    const requestHandler = new RequestHandler();
+    return await requestHandler.verifyAccessTokenAsync(req);
   }
 }

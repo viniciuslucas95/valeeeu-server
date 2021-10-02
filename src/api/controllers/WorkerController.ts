@@ -8,7 +8,7 @@ import { RequestHandler } from './helpers';
 export class WorkerController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await RequestHandler.verifyAccessTokenAsync(req);
+      const userId = await WorkerController.verifyAccessTokenAsync(req);
       const userService = UserServiceFactory.create();
       await userService.checkExistanceByIdAsync(userId);
       const { name, job, description, tags } =
@@ -42,13 +42,14 @@ export class WorkerController {
         client.release();
       }
     } catch (err) {
+      console.error(err);
       next(err);
     }
   }
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await RequestHandler.verifyAccessTokenAsync(req);
+      const userId = await WorkerController.verifyAccessTokenAsync(req);
       const userService = UserServiceFactory.create();
       await userService.checkExistanceByIdAsync(userId);
       const { name, job, description, tags } =
@@ -83,6 +84,7 @@ export class WorkerController {
         client.release();
       }
     } catch (err) {
+      console.error(err);
       next(err);
     }
   }
@@ -100,5 +102,10 @@ export class WorkerController {
     if (!tags.map) throw new InvalidRequestError('WrongTagsFormat');
     const formattedTags: string[] = tags.map((tag: any) => tag.toString());
     return formattedTags;
+  }
+
+  private static async verifyAccessTokenAsync(req: Request) {
+    const requestHandler = new RequestHandler();
+    return await requestHandler.verifyAccessTokenAsync(req);
   }
 }

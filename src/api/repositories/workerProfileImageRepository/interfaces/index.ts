@@ -1,0 +1,1 @@
+export { IWorkerProfileImageRepository } from './IWorkerProfileImageRepository';

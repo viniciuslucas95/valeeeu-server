@@ -10,13 +10,12 @@ import {
 const { findName, jobTitle, firstName } = name;
 const { text } = lorem;
 const url = `http://localhost:${EnvironmentConfig.serverPort}/workers`;
-let accessToken: string;
 let axiosConfig: AxiosRequestConfig;
 let workerProfile: any;
 
 beforeAll(async () => {
   const { email, password } = await createUserAsync();
-  accessToken = await getAccessTokenAsync(email, password);
+  const accessToken = await getAccessTokenAsync(email, password);
   axiosConfig = getAxiosConfig(accessToken);
   workerProfile = {
     name: findName(),

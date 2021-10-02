@@ -1,0 +1,1 @@
+export { WorkerProfileImage } from './WorkerProfileImage';

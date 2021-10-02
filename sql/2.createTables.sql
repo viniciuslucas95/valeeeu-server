@@ -103,8 +103,6 @@ CREATE TABLE tag(
 		PRIMARY KEY(id),
 	name VARCHAR
 		NOT NULL,
-	CONSTRAINT unique_tag_name
-		UNIQUE(name),
 	worker_profile_id VARCHAR(32)
 		NOT NULL,
 	CONSTRAINT fk_tag_worker_profile
@@ -133,6 +131,25 @@ CREATE TABLE customer_profile(
 		FOREIGN KEY(user_id)
 		REFERENCES "user"(id)
 		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE
+		NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE
+		NOT NULL
+);
+
+CREATE TABLE worker_profile_image(
+	id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_worker_profile_image_id
+		UNIQUE(id),
+	CONSTRAINT pk_worker_profile_image
+		PRIMARY KEY(id),
+	worker_profile_id VARCHAR(32),
+	CONSTRAINT fk_worker_profile_image_worker_profile
+		FOREIGN KEY(worker_profile_id)
+		REFERENCES worker_profile(id)
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	created_at TIMESTAMP WITH TIME ZONE
 		NOT NULL,

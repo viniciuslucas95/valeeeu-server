@@ -40,7 +40,12 @@ export class WorkerProfileService extends BaseService<WorkerProfile> {
     let updatedName = name ? name : undefined;
     let updatedJob = job ? job : undefined;
     let updatedDescription = description ? description : undefined;
-    const workerProfile = await this.repository.findByUserIdAsync(userId);
+    const workerProfile = await this.repository.findByUserIdAsync(userId, [
+      'id',
+      'name',
+      'job',
+      'description',
+    ]);
     if (!workerProfile)
       throw new InvalidRequestError('WorkerProfileDoesNotExist');
     await this.repository.updateAsync(workerProfile.id, {
@@ -49,6 +54,15 @@ export class WorkerProfileService extends BaseService<WorkerProfile> {
       description: updatedDescription ?? workerProfile.description,
       updatedAt: this.getCurrentDate(),
     });
+    return workerProfile.id;
+  }
+
+  async getIdByUserIdAsync(userId: string) {
+    const workerProfile = await this.repository.findByUserIdAsync(userId, [
+      'id',
+    ]);
+    if (!workerProfile)
+      throw new InvalidRequestError('WorkerProfileDoesNotExist');
     return workerProfile.id;
   }
 }

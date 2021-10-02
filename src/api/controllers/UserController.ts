@@ -22,7 +22,7 @@ export class UserController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await RequestHandler.verifyAccessTokenAsync(req);
+      const userId = await UserController.verifyAccessTokenAsync(req);
       const service = UserServiceFactory.create();
       const email = req.body.email?.toString() ?? '';
       const password = req.body.password?.toString() ?? '';
@@ -36,12 +36,17 @@ export class UserController {
 
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = await RequestHandler.verifyAccessTokenAsync(req);
+      const userId = await UserController.verifyAccessTokenAsync(req);
       const service = UserServiceFactory.create();
       await service.deleteAsync(userId);
       res.sendStatus(204);
     } catch (err) {
       next(err);
     }
+  }
+
+  private static async verifyAccessTokenAsync(req: Request) {
+    const requestHandler = new RequestHandler();
+    return await requestHandler.verifyAccessTokenAsync(req);
   }
 }

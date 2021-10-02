@@ -3,6 +3,7 @@ import {
   IWorkerProfileUpdateDto,
 } from '../../entities/dtos/workerProfile';
 import { WorkerProfile } from '../../entities/models/profiles';
+import { ServerError } from '../../errors';
 import { BaseRepositoryPostgresql } from '../BaseRepositoryPostgresql';
 import { IWorkerProfileRepository } from './interfaces';
 
@@ -32,16 +33,43 @@ export class WorkerProfileRepositoryPostgresql
     await this.connection.query(query, [name, job, description, updatedAt, id]);
   }
 
-  async findByUserIdAsync(
-    userId: string
+  // async findByUserIdAsync(
+  //   userId: string
+  // ): Promise<IWorkerProfileReadByUserIdResultDto | undefined> {
+  //   const query =
+  //     'SELECT id, name, job, description FROM worker_profile WHERE user_id = $1;';
+  //   const { rows } =
+  //     await this.connection.query<IWorkerProfileReadByUserIdResultDto>(query, [
+  //       userId,
+  //     ]);
+  //   return rows[0] ?? undefined;
+  // }
+
+  async findByUserIdAsync<K extends keyof IWorkerProfileReadByUserIdResultDto>(
+    userId: string,
+    keys: K[]
   ): Promise<IWorkerProfileReadByUserIdResultDto | undefined> {
-    const query =
-      'SELECT id, name, job, description FROM worker_profile WHERE user_id = $1;';
+    const query = `SELECT ${this.formatSelectionKeys(
+      keys
+    )} FROM worker_profile WHERE user_id = $1;`;
     const { rows } =
       await this.connection.query<IWorkerProfileReadByUserIdResultDto>(query, [
         userId,
       ]);
     return rows[0] ?? undefined;
+  }
+
+  private formatSelectionKeys(keys: string[]) {
+    if (keys.length === 0) throw new ServerError('NoKeySelected');
+    let formatedQuery = '';
+    const formatedKeys: string[] = [];
+    for (let i = 0; i < keys.length; i++) {
+      if (formatedKeys.includes(keys[i]))
+        throw new ServerError('DuplicatedKeySelected');
+      formatedQuery += keys[i];
+      if (i < keys.length - 1) formatedQuery += ', ';
+    }
+    return formatedQuery;
   }
 
   async findByIdAsync(id: string): Promise<boolean> {
