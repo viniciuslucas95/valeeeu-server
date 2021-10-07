@@ -4,9 +4,8 @@ import { WorkerController } from '../controllers';
 export class WorkerProfileRouter {
   static create() {
     const router = Router();
-    const url = '/workers';
-    router.post(url, WorkerController.create);
-    router.patch(url, WorkerController.update);
+    router.post('/workers', WorkerController.create);
+    router.patch('/workers', WorkerController.update);
     return router;
   }
 }

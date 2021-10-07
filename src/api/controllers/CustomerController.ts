@@ -1,17 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { InvalidRequestError } from '../errors';
-import {
-  CustomerProfileServiceFactory,
-  UserServiceFactory,
-} from '../factories';
+import { CustomerProfileServiceFactory } from '../factories';
 import { BaseController } from './BaseController';
 
 export class CustomerController extends BaseController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = await BaseController.verifyAccessTokenAsync(req);
-      const userService = UserServiceFactory.create();
-      await userService.checkExistanceByIdAsync(userId);
+      await BaseController.checkUserIdExistanceAsync(userId);
       const { name } = CustomerController.getRequestData(req);
       const customerProfileService = CustomerProfileServiceFactory.create();
       await customerProfileService.createAsync({
@@ -27,8 +23,7 @@ export class CustomerController extends BaseController {
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = await BaseController.verifyAccessTokenAsync(req);
-      const userService = UserServiceFactory.create();
-      await userService.checkExistanceByIdAsync(userId);
+      await BaseController.checkUserIdExistanceAsync(userId);
       const { name } = CustomerController.getRequestData(req);
       const customerProfileService = CustomerProfileServiceFactory.create();
       await customerProfileService.updateAsync(userId, {

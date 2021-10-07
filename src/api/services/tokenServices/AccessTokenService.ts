@@ -20,7 +20,7 @@ export class AccessTokenService extends BaseTokenService<AccessToken> {
     };
   }
 
-  verifyToken(token: string): string {
+  protected verifyTokenSignature(token: string): string {
     const { id } = <JwtPayload>(
       verify(
         token,

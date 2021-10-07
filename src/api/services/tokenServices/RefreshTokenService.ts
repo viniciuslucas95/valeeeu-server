@@ -20,7 +20,7 @@ export class RefreshTokenService extends BaseTokenService<RefreshToken> {
     };
   }
 
-  verifyToken(token: string): string {
+  protected verifyTokenSignature(token: string): string {
     const { id } = <JwtPayload>(
       verify(
         token,

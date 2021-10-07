@@ -156,3 +156,29 @@ CREATE TABLE worker_profile_image(
 	updated_at TIMESTAMP WITH TIME ZONE
 		NOT NULL
 );
+
+CREATE TABLE user_location(
+	id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_user_location_id
+		UNIQUE(id),
+	CONSTRAINT pk_user_location
+		PRIMARY KEY(id),
+	latitude INT
+		NOT NULL,
+	longitude INT
+		NOT NULL,
+	user_id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_user_location_user_id
+		UNIQUE(user_id),
+	CONSTRAINT fk_user_location_user
+		FOREIGN KEY(user_id)
+		REFERENCES "user"(id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE
+		NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE
+		NOT NULL
+);

@@ -5,9 +5,9 @@ export class UserRouter {
   static create() {
     const router = Router();
     const url = '/users';
-    router.post(url, UserController.create);
-    router.patch(`${url}/:accessToken`, UserController.update);
-    router.delete(`${url}/:accessToken`, UserController.delete);
+    router.post('/users', UserController.create);
+    router.patch('/users/:accessToken', UserController.update);
+    router.delete('/users/:accessToken', UserController.delete);
     return router;
   }
 }

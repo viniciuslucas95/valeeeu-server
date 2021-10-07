@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { InvalidRequestError } from '../errors/InvalidRequestError';
-import { UserServiceFactory, WorkerProfileServiceFactory } from '../factories';
+import { WorkerProfileServiceFactory } from '../factories';
 import { TagServiceFactory } from '../factories/TagServiceFactory';
 import { PoolProvider } from '../providers';
 import { BaseController } from './BaseController';
@@ -9,8 +9,7 @@ export class WorkerController extends BaseController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = await BaseController.verifyAccessTokenAsync(req);
-      const userService = UserServiceFactory.create();
-      await userService.checkExistanceByIdAsync(userId);
+      await BaseController.checkUserIdExistanceAsync(userId);
       const { name, job, description, tags } =
         WorkerController.getRequestData(req);
       if (!name) throw new InvalidRequestError('NullName');
@@ -50,8 +49,7 @@ export class WorkerController extends BaseController {
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = await BaseController.verifyAccessTokenAsync(req);
-      const userService = UserServiceFactory.create();
-      await userService.checkExistanceByIdAsync(userId);
+      await BaseController.checkUserIdExistanceAsync(userId);
       const { name, job, description, tags } =
         WorkerController.getRequestData(req);
       if (!name && !job && !description && tags.length === 0)

@@ -1,0 +1,1 @@
+export { UserLocationRepositoryPostgresql } from './UserLocationRepositoryPostgresql';

@@ -29,7 +29,7 @@ export abstract class BaseTokenService<
   }
 
   async verifyTokenAsync(token: string): Promise<ITokenVerifyResultDto> {
-    const userId = this.verifyToken(token);
+    const userId = this.verifyTokenSignature(token);
     const refreshToken = await this.tokenRepository.findByTokenAsync(token);
     if (!refreshToken) throw new ServerError('TokenNotFound');
     if (refreshToken.isForbidden) throw new ForbiddenError('ForbiddenToken');
@@ -48,7 +48,7 @@ export abstract class BaseTokenService<
     if (result) throw new ConflictError('TokenAlreadyExists');
   }
 
-  protected abstract verifyToken(token: string): string;
+  protected abstract verifyTokenSignature(token: string): string;
 
   protected abstract createNewToken(
     parentId: string,

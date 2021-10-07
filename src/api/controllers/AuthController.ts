@@ -8,6 +8,8 @@ import {
 import { PoolProvider } from '../providers';
 import { BaseController } from './BaseController';
 
+type TokenResponse = 'valid' | 'invalid' | 'notSent';
+
 export class AuthController extends BaseController {
   static async createBothTokens(
     req: Request,
@@ -63,7 +65,7 @@ export class AuthController extends BaseController {
     next: NextFunction
   ) {
     try {
-      const refreshToken = req.params.refreshToken?.toString() ?? '';
+      const refreshToken = req.params['refreshToken']?.toString() ?? '';
       if (!refreshToken) throw new InvalidRequestError('NullRefreshToken');
       const client = await PoolProvider.pool.connect();
       const refreshTokenService = RefreshTokenServiceFactory.create(client);
@@ -89,6 +91,41 @@ export class AuthController extends BaseController {
       } finally {
         client.release();
       }
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async verifyTokens(req: Request, res: Response, next: NextFunction) {
+    try {
+      const accessToken = req.query['access-token']?.toString() ?? '';
+      const refreshToken = req.query['refresh-token']?.toString() ?? '';
+      if (!accessToken && !refreshToken)
+        throw new InvalidRequestError('NoTokenSent');
+      let accessTokenResponse: TokenResponse = 'notSent';
+      let refreshTokenResponse: TokenResponse = 'notSent';
+      const accessTokenService = AccessTokenServiceFactory.create();
+      const refreshTokenService = RefreshTokenServiceFactory.create();
+      if (accessToken) {
+        try {
+          await accessTokenService.verifyTokenAsync(accessToken);
+          accessTokenResponse = 'valid';
+        } catch (err) {
+          accessTokenResponse = 'invalid';
+        }
+      }
+      if (refreshToken) {
+        try {
+          await refreshTokenService.verifyTokenAsync(refreshToken);
+          refreshTokenResponse = 'valid';
+        } catch (err) {
+          refreshTokenResponse = 'invalid';
+        }
+      }
+      return res.status(200).json({
+        accessTokenResponse,
+        refreshTokenResponse,
+      });
     } catch (err) {
       next(err);
     }

@@ -4,9 +4,8 @@ import { CustomerController } from '../controllers';
 export class CustomerProfileRouter {
   static create() {
     const router = Router();
-    const url = '/customers';
-    router.post(url, CustomerController.create);
-    router.patch(url, CustomerController.update);
+    router.post('/customers', CustomerController.create);
+    router.patch('/customers', CustomerController.update);
     return router;
   }
 }

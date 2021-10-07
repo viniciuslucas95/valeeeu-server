@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserServiceFactory, WorkerProfileServiceFactory } from '../factories';
+import { WorkerProfileServiceFactory } from '../factories';
 import {
   WorkerProfileImageDatabaseServiceFactory,
   WorkerProfileImageDiskServiceFactory,
@@ -10,8 +10,7 @@ export class WorkerImageController extends BaseController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = await BaseController.verifyAccessTokenAsync(req);
-      const userService = UserServiceFactory.create();
-      await userService.checkExistanceByIdAsync(userId);
+      await BaseController.checkUserIdExistanceAsync(userId);
       const workerProfileService = WorkerProfileServiceFactory.create();
       const workerProfileId = await workerProfileService.getIdByUserIdAsync(
         userId

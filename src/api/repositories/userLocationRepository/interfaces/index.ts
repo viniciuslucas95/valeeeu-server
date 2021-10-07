@@ -1,0 +1,1 @@
+export { IUserLocationRepository } from './IUserLocationRepository';

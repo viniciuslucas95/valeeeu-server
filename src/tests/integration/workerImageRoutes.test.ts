@@ -21,7 +21,7 @@ const exampleImagePath = join(
   '/image2.png'
 );
 const readableStream = createReadStream(exampleImagePath);
-const url = `http://localhost:${EnvironmentConfig.serverPort}/images/workers`;
+const url = `http://localhost:${EnvironmentConfig.serverPort}/workers/images`;
 let axiosConfig: AxiosRequestConfig;
 
 beforeAll(async () => {
