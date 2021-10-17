@@ -1,1 +1,1 @@
-export { ErrorMiddleware } from './ErrorMiddleware';
+export { ErrorMiddleware } from './error-middleware';
