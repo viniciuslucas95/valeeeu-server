@@ -1,10 +1,13 @@
-import { Id } from '../data-types/types';
-import { IAccountCredentialsDto, IIdDto } from '../entities/dtos';
 import { ConflictError, InvalidRequestError } from '../errors';
 import { BcryptHandler } from '../helpers';
 import { IAccountRepository } from '../repositories/interfaces';
 import { EmailValidator, PasswordValidator } from '../validators';
 import { BaseService } from './base-service';
+
+interface IAccountCredentials {
+  email: string;
+  password: string;
+}
 
 export class AccountService extends BaseService {
   private readonly accountNotFoundError = new InvalidRequestError(
@@ -15,7 +18,7 @@ export class AccountService extends BaseService {
     super(repository);
   }
 
-  async createAsync(data: IAccountCredentialsDto): Promise<IIdDto> {
+  async createAsync(data: IAccountCredentials): Promise<string> {
     const { email, password } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
@@ -25,12 +28,12 @@ export class AccountService extends BaseService {
       createdAt: currentDate,
       updatedAt: currentDate,
     });
-    return { id: newId };
+    return newId;
   }
 
-  async updateAsync(id: Id, data: Partial<IAccountCredentialsDto>) {
+  async updateAsync(id: string, data: Partial<IAccountCredentials>) {
     const { email, password } = data;
-    const credentials = await this.repository.getCredentialsByIdAsync(id);
+    const credentials = await this.repository.getPrivilegedAsync(id);
     if (!credentials) throw this.accountNotFoundError;
     await this.repository.updateAsync(id, {
       email: email
@@ -43,22 +46,22 @@ export class AccountService extends BaseService {
     });
   }
 
-  async deleteAsync(id: Id) {
+  async deleteAsync(id: string) {
     await this.validateExistenceByIdAsync(id);
     await this.repository.deleteAsync(id);
   }
 
-  async getAccountAsync(id: Id) {
-    const email = await this.repository.getEmailByIdAsync(id);
-    if (!email) throw this.accountNotFoundError;
-    return email;
+  async getAccountAsync(id: string) {
+    const account = await this.repository.getAsync(id);
+    if (!account) throw this.accountNotFoundError;
+    return account;
   }
 
   async validateExistenceByIdAsync(
-    id: Id,
+    id: string,
     error: Error = this.accountNotFoundError
   ) {
-    if (!(await this.repository.checkExistenceByIdAsync(id))) throw error;
+    if (!(await this.repository.checkExistenceAsync(id))) throw error;
   }
 
   private async getValidatedAndFormatedEmailAsync(email: string) {

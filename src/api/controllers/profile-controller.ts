@@ -18,7 +18,7 @@ export class ProfileController {
         name,
         accountId,
       });
-      res.status(201).json({ data: id });
+      res.status(201).json({ data: { id } });
     } catch (err) {
       next(err);
     }

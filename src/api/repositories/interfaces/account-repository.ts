@@ -1,18 +1,32 @@
-import { IBaseRepository } from '.';
-import { Id } from '../../data-types/types';
-import { IAccountCredentialsDto, IDateDto } from '../../entities/dtos';
+import { IReadRepository, IWriteRepository } from '.';
 import { Account } from '../../entities/models';
 
-export interface IAccountRepository extends IBaseRepository {
-  createAsync(data: Account): Promise<void>;
-  updateAsync(
-    id: Id,
-    data: IAccountCredentialsDto & Omit<IDateDto, 'createdAt'>
-  ): Promise<void>;
-  deleteAsync(id: Id): Promise<void>;
-  getCredentialsByIdAsync(id: Id): Promise<IAccountCredentialsDto | undefined>;
-  getEmailByIdAsync(
-    id: Id
-  ): Promise<Omit<IAccountCredentialsDto, 'password'> | undefined>;
+export interface IAccountResultDto {
+  email: string;
+}
+
+export interface IAccountPrivilegedResultDto {
+  email: string;
+  password: string;
+}
+
+export interface IAccountUpdateDto {
+  email: string;
+  password: string;
+  updatedAt: Date;
+}
+
+export interface IAccountRepository
+  extends IReadAccountRepository,
+    IWriteAccountRepository {}
+
+export interface IReadAccountRepository
+  extends Omit<IReadRepository<IAccountResultDto, unknown>, 'getAllAsync'> {
+  getPrivilegedAsync(
+    id: string
+  ): Promise<IAccountPrivilegedResultDto | undefined>;
   checkExistenceByEmailAsync(email: string): Promise<boolean>;
 }
+
+export interface IWriteAccountRepository
+  extends IWriteRepository<Account, IAccountUpdateDto> {}

@@ -1,14 +1,20 @@
-import { Id } from '../data-types/types';
-import { IProfileDataDto, IDateDto } from '../entities/dtos';
+import { DatabaseConnection } from '../data-types/types';
 import { Profile } from '../entities/models';
 import { BaseRepositoryPostgresql } from './base-repository-postgresql';
-import { IProfileRepository } from './interfaces';
+import {
+  IIProfileMultipleResultsDto,
+  IIProfileSingleResultDto,
+  IProfileRepository,
+  IProfileUpdateDto,
+} from './interfaces';
 
 export class ProfileRepositoryPostgresql
   extends BaseRepositoryPostgresql
   implements IProfileRepository
 {
-  private readonly tableName = 'profile';
+  constructor(connection: DatabaseConnection) {
+    super(connection, 'profile');
+  }
 
   async createAsync(data: Profile): Promise<void> {
     const { id, name, accountId, createdAt, updatedAt } = data;
@@ -22,10 +28,7 @@ export class ProfileRepositoryPostgresql
     ]);
   }
 
-  async updateAsync(
-    id: string,
-    data: Omit<IProfileDataDto, 'accountId'> & Omit<IDateDto, 'createdAt'>
-  ): Promise<void> {
+  async updateAsync(id: string, data: IProfileUpdateDto): Promise<void> {
     const { name, updatedAt } = data;
     const query = `UPDATE ${this.tableName} SET name = $1, updated_at = $2 WHERE id = $3;`;
     await this.connection.query(query, [name, updatedAt, id]);
@@ -36,48 +39,53 @@ export class ProfileRepositoryPostgresql
     await this.connection.query(query, [id]);
   }
 
-  async getProfileAsync(id: Id): Promise<IProfileDataDto | undefined> {
-    const query = `SELECT name FROM ${this.tableName} WHERE id = $1;`;
-    const { rows } = await this.connection.query<IProfileDataDto>(query, [id]);
+  async getAsync(id: string): Promise<IIProfileSingleResultDto | undefined> {
+    const query = `SELECT name FROM ${this.tableName} WHERE id = $1`;
+    const { rows } = await this.connection.query<IIProfileSingleResultDto>(
+      query,
+      [id]
+    );
     return rows[0] ?? undefined;
   }
 
-  async getProfileByIdsAsync(
-    id: Id,
-    accountId: Id
-  ): Promise<IProfileDataDto | undefined> {
+  async getByIdAndParentIdAsync(
+    id: string,
+    parentId: string
+  ): Promise<IIProfileSingleResultDto> {
     const query = `SELECT name FROM ${this.tableName} WHERE id = $1 AND account_id = $2`;
-    const { rows } = await this.connection.query<IProfileDataDto>(query, [
-      id,
-      accountId,
-    ]);
+    const { rows } = await this.connection.query<IIProfileSingleResultDto>(
+      query,
+      [id, parentId]
+    );
     return rows[0] ?? undefined;
   }
 
-  async getAllProfilesAsync(): Promise<IProfileDataDto[]> {
+  async getAllAsync(): Promise<IIProfileMultipleResultsDto[] | undefined> {
     const query = `SELECT id, name FROM ${this.tableName};`;
-    const { rows } = await this.connection.query<IProfileDataDto>(query);
+    const { rows } = await this.connection.query<IIProfileMultipleResultsDto>(
+      query
+    );
     return rows;
   }
 
-  async checkExistenceByIdAsync(id: Id): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1;`;
+  async checkExistenceAsync(id: string): Promise<boolean> {
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
-  async checkExistenceAndRelationshipAsync(
-    id: Id,
-    accountId: Id
-  ): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND account_id = $2;`;
-    const { rows } = await this.connection.query(query, [id, accountId]);
+  async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
+    const query = `SELECT id FROM ${this.tableName} WHERE account_id = $1`;
+    const { rows } = await this.connection.query(query, [parentId]);
     return rows[0] ? true : false;
   }
 
-  async checkExistenceByAccountIdAsync(accountId: Id): Promise<boolean> {
-    const query = `SELECT account_id FROM ${this.tableName} WHERE account_id = $1;`;
-    const { rows } = await this.connection.query(query, [accountId]);
+  async checkExistenceByIdAndParentIdAsync(
+    id: string,
+    parentId: string
+  ): Promise<boolean> {
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND account_id = $2`;
+    const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ? true : false;
   }
 }

@@ -1,3 +1,18 @@
-export { IAccountRepository } from './account-repository';
-export { IBaseRepository } from './base-repository';
-export { IProfileRepository } from './profile-repository';
+export {
+  IWriteAccountRepository,
+  IReadAccountRepository,
+  IAccountUpdateDto,
+  IAccountPrivilegedResultDto,
+  IAccountResultDto,
+  IAccountRepository,
+} from './account-repository';
+export { IWriteRepository, IReadRepository } from './base-repository';
+export {
+  IReadProfileRepository,
+  IWriteProfileRepository,
+  IIProfileSingleResultDto,
+  IIProfileMultipleResultsDto,
+  IProfileRepository,
+  IProfileUpdateDto,
+} from './profile-repository';
+export { IReadParentRepository } from './parent-repository';

@@ -1,14 +1,18 @@
 import { randomUUID } from 'crypto';
-import { Id } from '../data-types/types';
-import { IBaseRepository } from '../repositories/interfaces';
+import { IReadRepository } from '../repositories/interfaces';
 
 interface IBaseModelData {
-  newId: Id;
+  newId: string;
   currentDate: Date;
 }
 
 export abstract class BaseService {
-  constructor(private readonly baseRepository: IBaseRepository) {}
+  constructor(
+    private readonly baseRepository: Omit<
+      IReadRepository<unknown, unknown>,
+      'getAsync' | 'getAllAsync'
+    >
+  ) {}
 
   protected async generateNewBaseModelData(): Promise<IBaseModelData> {
     const newId = await this.generateNewIdAsync();
@@ -26,7 +30,7 @@ export abstract class BaseService {
 
   private async generateNewIdAsync() {
     let newId = this.generateNewId();
-    while (await this.baseRepository.checkExistenceByIdAsync(newId))
+    while (await this.baseRepository.checkExistenceAsync(newId))
       newId = this.generateNewId();
     return newId;
   }

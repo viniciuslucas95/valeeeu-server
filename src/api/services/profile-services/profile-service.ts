@@ -1,11 +1,10 @@
-import { Id } from '../../data-types/types';
-import { IIdDto, IProfileDataDto } from '../../entities/dtos';
 import { ConflictError, InvalidRequestError } from '../../errors';
 import { IProfileRepository } from '../../repositories/interfaces';
 import { BaseService } from '../base-service';
 
-interface IProfileCreation extends IProfileDataDto {
-  accountId: Id;
+interface IProfileData {
+  name: string;
+  accountId: string;
 }
 
 export class ProfileService extends BaseService {
@@ -17,7 +16,7 @@ export class ProfileService extends BaseService {
     super(repository);
   }
 
-  async createAsync(data: IProfileCreation): Promise<IIdDto> {
+  async createAsync(data: IProfileData): Promise<string> {
     const { name, accountId } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
@@ -27,12 +26,15 @@ export class ProfileService extends BaseService {
       createdAt: currentDate,
       updatedAt: currentDate,
     });
-    return { id: newId };
+    return newId;
   }
 
-  async updateAsync(id: Id, data: IProfileDataDto) {
+  async updateAsync(id: string, data: IProfileData) {
     const { name, accountId } = data;
-    const profile = await this.repository.getProfileByIdsAsync(id, accountId);
+    const profile = await this.repository.getByIdAndParentIdAsync(
+      id,
+      accountId
+    );
     if (!profile) throw this.profileNotFoundError;
     await this.repository.updateAsync(id, {
       name,
@@ -40,34 +42,34 @@ export class ProfileService extends BaseService {
     });
   }
 
-  async deleteAsync(id: Id, accountId: Id) {
-    await this.validateExistenceAndRelationshipAsync(id, accountId);
+  async deleteAsync(id: string, accountId: string) {
+    await this.validateExistenceByIdAndParentIdAsync(id, accountId);
     await this.repository.deleteAsync(id);
   }
 
-  async getProfileAsync(id: Id) {
-    const profile = await this.repository.getProfileAsync(id);
+  async getProfileAsync(id: string) {
+    const profile = await this.repository.getAsync(id);
     if (!profile) throw this.profileNotFoundError;
     return profile;
   }
 
   async getAllProfilesAsync() {
-    return await this.repository.getAllProfilesAsync();
+    return await this.repository.getAllAsync();
   }
 
-  async validateExistenceAndRelationshipAsync(
-    id: Id,
-    accountId: Id,
+  async validateExistenceByIdAndParentIdAsync(
+    id: string,
+    accountId: string,
     error: Error = this.profileNotFoundError
   ) {
     if (
-      !(await this.repository.checkExistenceAndRelationshipAsync(id, accountId))
+      !(await this.repository.checkExistenceByIdAndParentIdAsync(id, accountId))
     )
       throw error;
   }
 
-  async checkExistenceByAccountId(accountId: Id) {
-    if (await this.repository.checkExistenceByAccountIdAsync(accountId))
+  async checkExistenceByAccountId(accountId: string) {
+    if (await this.repository.checkExistenceByParentIdAsync(accountId))
       throw new ConflictError('ProfileAlreadyCreated');
   }
 }
