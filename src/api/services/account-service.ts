@@ -44,7 +44,7 @@ export class AccountService extends BaseService {
   }
 
   async deleteAsync(id: Id) {
-    await this.validateExistanceByIdAsync(id);
+    await this.validateExistenceByIdAsync(id);
     await this.repository.deleteAsync(id);
   }
 
@@ -54,17 +54,17 @@ export class AccountService extends BaseService {
     return email;
   }
 
-  async validateExistanceByIdAsync(
+  async validateExistenceByIdAsync(
     id: Id,
     error: Error = this.accountNotFoundError
   ) {
-    if (!(await this.repository.checkExistanceByIdAsync(id))) throw error;
+    if (!(await this.repository.checkExistenceByIdAsync(id))) throw error;
   }
 
   private async getValidatedAndFormatedEmailAsync(email: string) {
     EmailValidator.validate(email);
     const formatedEmail = this.formatEmail(email);
-    if (await this.repository.checkExistanceByEmailAsync(formatedEmail))
+    if (await this.repository.checkExistenceByEmailAsync(formatedEmail))
       throw new ConflictError('EmailAlreadyExists');
     return formatedEmail;
   }

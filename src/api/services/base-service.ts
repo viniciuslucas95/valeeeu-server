@@ -26,7 +26,7 @@ export abstract class BaseService {
 
   private async generateNewIdAsync() {
     let newId = this.generateNewId();
-    while (await this.baseRepository.checkExistanceByIdAsync(newId))
+    while (await this.baseRepository.checkExistenceByIdAsync(newId))
       newId = this.generateNewId();
     return newId;
   }

@@ -7,7 +7,6 @@ export class ErrorMiddleware {
     if (err.name === 'ForbiddenError')
       return res.status(403).json({ error: err });
     if (err.name === 'ServerError') return res.status(500).json({ error: err });
-    console.error({ error: err });
     res.status(400).json({ error: err });
   }
 }

@@ -14,5 +14,5 @@ export interface IAccountRepository extends IBaseRepository {
   getEmailByIdAsync(
     id: Id
   ): Promise<Omit<IAccountCredentialsDto, 'password'> | undefined>;
-  checkExistanceByEmailAsync(email: string): Promise<boolean>;
+  checkExistenceByEmailAsync(email: string): Promise<boolean>;
 }
