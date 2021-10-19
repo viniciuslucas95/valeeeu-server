@@ -1,13 +1,9 @@
+import { IAccountCredentialsDto } from '../entities/dtos';
 import { ConflictError, InvalidRequestError } from '../errors';
 import { BcryptHandler } from '../helpers';
 import { IAccountRepository } from '../repositories/interfaces';
 import { EmailValidator, PasswordValidator } from '../validators';
 import { BaseService } from './base-service';
-
-interface IAccountCredentials {
-  email: string;
-  password: string;
-}
 
 export class AccountService extends BaseService {
   private readonly accountNotFoundError = new InvalidRequestError(
@@ -18,7 +14,7 @@ export class AccountService extends BaseService {
     super(repository);
   }
 
-  async createAsync(data: IAccountCredentials): Promise<string> {
+  async createAsync(data: IAccountCredentialsDto): Promise<string> {
     const { email, password } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
@@ -31,7 +27,7 @@ export class AccountService extends BaseService {
     return newId;
   }
 
-  async updateAsync(id: string, data: Partial<IAccountCredentials>) {
+  async updateAsync(id: string, data: Partial<IAccountCredentialsDto>) {
     const { email, password } = data;
     const credentials = await this.repository.getPrivilegedAsync(id);
     if (!credentials) throw this.accountNotFoundError;

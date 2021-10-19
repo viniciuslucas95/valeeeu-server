@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import { IIdDto, IProfileDataDto } from '../entities/dtos';
 import { InvalidRequestError } from '../errors';
 import { AccountServiceFactory, ProfileServiceFactory } from '../factories';
+import { RequestParamsHandler } from './request-params-handler';
 
 export class ProfileController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
       // Verify access token
-      const { id: accountId } = ProfileController.getAccountId(req);
-      const { name } = ProfileController.getData(req);
+      const { accountId } = RequestParamsHandler.getAccountId(req);
+      const { name } = ProfileController.getProfileData(req);
       if (!name) throw new InvalidRequestError('NullName');
       const profileService = ProfileServiceFactory.create();
       await profileService.checkExistenceByAccountId(accountId);
@@ -18,7 +18,7 @@ export class ProfileController {
         name,
         accountId,
       });
-      res.status(201).json({ data: { id } });
+      res.status(201).json({ id });
     } catch (err) {
       next(err);
     }
@@ -27,9 +27,9 @@ export class ProfileController {
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
       // Verify access token
-      const { id: accountId } = ProfileController.getAccountId(req);
-      const { id: profileId } = ProfileController.getProfileId(req);
-      const { name } = ProfileController.getData(req);
+      const { accountId } = RequestParamsHandler.getAccountId(req);
+      const { profileId } = RequestParamsHandler.getProfileId(req);
+      const { name } = ProfileController.getProfileData(req);
       if (!name) throw new InvalidRequestError('NullName');
       const profileService = ProfileServiceFactory.create();
       await profileService.updateAsync(profileId, { name, accountId });
@@ -42,8 +42,8 @@ export class ProfileController {
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
       // Verify access token
-      const { id: accountId } = ProfileController.getAccountId(req);
-      const { id: profileId } = ProfileController.getProfileId(req);
+      const { accountId } = RequestParamsHandler.getAccountId(req);
+      const { profileId } = RequestParamsHandler.getProfileId(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.deleteAsync(profileId, accountId);
       res.sendStatus(204);
@@ -54,10 +54,10 @@ export class ProfileController {
 
   static async getAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id: profileId } = ProfileController.getProfileId(req);
+      const { profileId } = RequestParamsHandler.getProfileId(req);
       const profileService = ProfileServiceFactory.create();
       const profile = await profileService.getProfileAsync(profileId);
-      res.status(200).json({ data: profile });
+      res.status(200).json(profile);
     } catch (err) {
       next(err);
     }
@@ -67,21 +67,13 @@ export class ProfileController {
     try {
       const profileService = ProfileServiceFactory.create();
       const profiles = await profileService.getAllProfilesAsync();
-      res.status(200).json({ data: profiles });
+      res.status(200).json(profiles);
     } catch (err) {
       next(err);
     }
   }
 
-  private static getData(req: Request): Partial<IProfileDataDto> {
+  private static getProfileData(req: Request) {
     return { name: req.body.name?.toString() ?? undefined };
-  }
-
-  private static getProfileId(req: Request): IIdDto {
-    return { id: req.params.profileId };
-  }
-
-  private static getAccountId(req: Request): IIdDto {
-    return { id: req.params.accountId };
   }
 }

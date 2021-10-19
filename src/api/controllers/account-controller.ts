@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { IAccountCredentialsDto, IIdDto } from '../entities/dtos';
+import { IAccountCredentialsDto } from '../entities/dtos';
 import { InvalidRequestError } from '../errors';
 import { AccountServiceFactory } from '../factories';
+import { RequestParamsHandler } from './request-params-handler';
 
 export class AccountController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
@@ -14,7 +15,7 @@ export class AccountController {
         email,
         password,
       });
-      res.status(201).json({ data: { id } });
+      res.status(201).json({ id });
     } catch (err) {
       next(err);
     }
@@ -23,11 +24,11 @@ export class AccountController {
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
       // Verify access token
-      const { id } = AccountController.getAccountId(req);
+      const { accountId } = RequestParamsHandler.getAccountId(req);
       const { email, password } = AccountController.getCredentials(req);
       const service = AccountServiceFactory.create();
       if (!email && !password) throw new InvalidRequestError('NoChangesSent');
-      await service.updateAsync(id, { email, password });
+      await service.updateAsync(accountId, { email, password });
       res.sendStatus(204);
     } catch (err) {
       next(err);
@@ -37,9 +38,9 @@ export class AccountController {
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
       // Verify access token
-      const { id } = AccountController.getAccountId(req);
+      const { accountId } = RequestParamsHandler.getAccountId(req);
       const service = AccountServiceFactory.create();
-      await service.deleteAsync(id);
+      await service.deleteAsync(accountId);
       res.sendStatus(204);
     } catch (err) {
       next(err);
@@ -49,10 +50,10 @@ export class AccountController {
   static async getAsync(req: Request, res: Response, next: NextFunction) {
     try {
       // Verify access token
-      const { id } = AccountController.getAccountId(req);
+      const { accountId } = RequestParamsHandler.getAccountId(req);
       const service = AccountServiceFactory.create();
-      const account = await service.getAccountAsync(id);
-      res.status(200).json({ data: account });
+      const account = await service.getAccountAsync(accountId);
+      res.status(200).json(account);
     } catch (err) {
       next(err);
     }
@@ -62,9 +63,5 @@ export class AccountController {
     const email = req.body.email?.toString() ?? undefined;
     const password = req.body.password?.toString() ?? undefined;
     return { email, password };
-  }
-
-  private static getAccountId(req: Request): IIdDto {
-    return { id: req.params.accountId };
   }
 }
