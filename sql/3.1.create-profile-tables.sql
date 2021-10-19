@@ -67,3 +67,25 @@ CREATE TABLE profile_rating(
 	updated_at TIMESTAMP WITH TIME ZONE
 		NOT NULL
 );
+
+CREATE TABLE profile_picture(
+	id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_profile_picture_id
+		UNIQUE(id),
+	CONSTRAINT pk_profile_picture
+		PRIMARY KEY(id),
+	picture VARCHAR
+		NOT NULL,
+	profile_id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT fk_profile_picture_profile
+		FOREIGN KEY(profile_id)
+		REFERENCES profile(id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE
+		NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE
+		NOT NULL
+);

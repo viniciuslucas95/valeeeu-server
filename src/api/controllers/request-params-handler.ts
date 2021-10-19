@@ -16,4 +16,8 @@ export class RequestParamsHandler {
   static getRatingId(req: Request) {
     return { ratingId: req.params.ratingId };
   }
+
+  static getPictureId(req: Request) {
+    return { pictureId: req.params.pictureId };
+  }
 }

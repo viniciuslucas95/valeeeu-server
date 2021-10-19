@@ -1,8 +1,8 @@
 import { ValidationError } from '../errors';
 
-export class WordValidator {
-  static validate(name: string) {
-    const formatedString = name.replace(/[^\w]/gimu, '');
+export class PictureValidator {
+  static validate(picture: string) {
+    const formatedString = picture.replace(/[^a-z0-9+\/]/gim, '');
     if (formatedString.length < 1)
       throw new ValidationError('InvalidNameFormat');
   }

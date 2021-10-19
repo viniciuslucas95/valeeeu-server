@@ -5,6 +5,7 @@ import {
   ProfileContactRouter,
   ProfileRouter,
   ProfileRatingRouter,
+  ProfilePictureRouter,
 } from './profile';
 
 export class RouteHandler {
@@ -14,5 +15,6 @@ export class RouteHandler {
     server.use('/', ProfileRouter.create(), handleError);
     server.use('/', ProfileContactRouter.create(), handleError);
     server.use('/', ProfileRatingRouter.create(), handleError);
+    server.use('/', ProfilePictureRouter.create(), handleError);
   }
 }
