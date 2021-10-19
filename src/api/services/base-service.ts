@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
-import { IReadRepository } from '../repositories/interfaces';
+import { InvalidRequestError } from '../errors';
+import { IReadRepository } from '../repositories/interfaces/base-repository';
 
 interface IBaseModelData {
   newId: string;
@@ -8,11 +9,23 @@ interface IBaseModelData {
 
 export abstract class BaseService {
   constructor(
-    private readonly baseRepository: Omit<
-      IReadRepository<unknown, unknown>,
-      'getAsync' | 'getAllAsync'
-    >
+    private readonly baseRepository: IReadRepository<unknown, unknown>,
+    protected readonly notFoundError: InvalidRequestError
   ) {}
+
+  async getAsync(id: string) {
+    const result = await this.baseRepository.getAsync(id);
+    if (!result) throw this.notFoundError;
+    return result;
+  }
+
+  async getAllAsync() {
+    return await this.baseRepository.getAllAsync();
+  }
+
+  async validateExistenceAsync(id: string, error: Error = this.notFoundError) {
+    if (!(await this.baseRepository.checkExistenceAsync(id))) throw error;
+  }
 
   protected async generateNewBaseModelData(): Promise<IBaseModelData> {
     const newId = await this.generateNewIdAsync();

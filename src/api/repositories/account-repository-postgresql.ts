@@ -6,7 +6,7 @@ import {
   IAccountRepository,
   IAccountResultDto,
   IAccountUpdateDto,
-} from './interfaces';
+} from './interfaces/account-repository';
 
 export class AccountRepositoryPostgresql
   extends BaseRepositoryPostgresql
@@ -56,6 +56,10 @@ export class AccountRepositoryPostgresql
       [id]
     );
     return rows[0] ?? undefined;
+  }
+
+  async getAllAsync(): Promise<unknown[]> {
+    return [];
   }
 
   async checkExistenceAsync(id: string): Promise<boolean> {

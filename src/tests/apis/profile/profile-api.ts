@@ -1,15 +1,12 @@
 import axios from 'axios';
 import { name } from 'faker';
-import { EnvironmentConfig } from '../../configs';
-import { axiosConfig } from '../axios-config';
+import { IProfileDto } from '../../../api/entities/dtos/profiles-dtos';
+import { EnvironmentConfig } from '../../../configs';
+import { axiosConfig } from '../../axios-config';
 
 const { findName } = name;
 
-interface IProfile {
-  name: string;
-}
-
-export function generateRandomProfile(): IProfile {
+export function generateRandomProfile(): IProfileDto {
   return { name: generateRandomName() };
 }
 
@@ -19,41 +16,37 @@ export function generateRandomName() {
 
 export async function createProfileAsync(
   accountId: string,
-  data: Partial<IProfile>
+  data: Partial<IProfileDto>
 ) {
-  return await axios.post(getAccountUrl(accountId), data, axiosConfig);
+  return await axios.post(getFullUrl(accountId), data, axiosConfig);
 }
 
 export async function updateProfileAsync(
   accountId: string,
   profileId: string,
-  data: Partial<IProfile>
+  data: Partial<IProfileDto>
 ) {
-  return await axios.patch(
-    getAccountUrl(accountId, profileId),
-    data,
-    axiosConfig
-  );
+  return await axios.patch(getFullUrl(accountId, profileId), data, axiosConfig);
 }
 
 export async function deleteProfileAsync(accountId: string, profileId: string) {
-  return await axios.delete(getAccountUrl(accountId, profileId), axiosConfig);
+  return await axios.delete(getFullUrl(accountId, profileId), axiosConfig);
 }
 
 export async function getProfileAsync(profileId: string) {
-  return await axios.get(getProfileUrl(profileId), axiosConfig);
+  return await axios.get(getShortUrl(profileId), axiosConfig);
 }
 
 export async function getAllProfilesAsync() {
-  return await axios.get(getProfileUrl(), axiosConfig);
+  return await axios.get(getShortUrl(), axiosConfig);
 }
 
-function getAccountUrl(accountId: string, profileId?: string) {
+function getFullUrl(accountId: string, profileId?: string) {
   const hasProfileId = profileId ? `/${profileId}` : '';
   return `http://localhost:${EnvironmentConfig.serverPort}/accounts/${accountId}/profiles${hasProfileId}`;
 }
 
-function getProfileUrl(profileId?: string) {
+function getShortUrl(profileId?: string) {
   const hasProfileId = profileId ? `/${profileId}` : '';
   return `http://localhost:${EnvironmentConfig.serverPort}/profiles${hasProfileId}`;
 }

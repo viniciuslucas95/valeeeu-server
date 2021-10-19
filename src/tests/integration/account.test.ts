@@ -1,4 +1,4 @@
-import { IAccountCredentialsDto } from '../../api/entities/dtos';
+import { IAccountDto } from '../../api/entities/dtos';
 import {
   createAccountAsync,
   deleteAccountAsync,
@@ -9,7 +9,7 @@ import {
   updateAccountAsync,
 } from '../apis/account-api';
 
-let account: IAccountCredentialsDto;
+let account: IAccountDto;
 let accountId: string;
 
 beforeAll(() => {

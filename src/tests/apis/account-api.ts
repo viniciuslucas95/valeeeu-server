@@ -2,12 +2,12 @@ import axios from 'axios';
 import { EnvironmentConfig } from '../../configs';
 import { internet } from 'faker';
 import { axiosConfig } from '../axios-config';
-import { IAccountCredentialsDto } from '../../api/entities/dtos';
+import { IAccountDto } from '../../api/entities/dtos';
 
 const { email, password } = internet;
 const url = `http://localhost:${EnvironmentConfig.serverPort}/accounts`;
 
-export function generateRandomAccount(): IAccountCredentialsDto {
+export function generateRandomAccount(): IAccountDto {
   return {
     email: generateRandomEmail(),
     password: generateRandomPassword(),
@@ -22,15 +22,13 @@ export function generateRandomPassword() {
   return password();
 }
 
-export async function createAccountAsync(
-  data: Partial<IAccountCredentialsDto>
-) {
+export async function createAccountAsync(data: Partial<IAccountDto>) {
   return await axios.post(url, data, axiosConfig);
 }
 
 export async function updateAccountAsync(
   id: string,
-  data: Partial<IAccountCredentialsDto>
+  data: Partial<IAccountDto>
 ) {
   return await axios.patch(`${url}/${id}`, data, axiosConfig);
 }

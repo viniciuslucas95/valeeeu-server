@@ -1,23 +1,21 @@
+import { IProfileDto } from '../../entities/dtos/profiles-dtos';
 import { ConflictError, InvalidRequestError } from '../../errors';
-import { IProfileRepository } from '../../repositories/interfaces';
-import { BaseService } from '../base-service';
+import { IProfileRepository } from '../../repositories/interfaces/profile-repository';
+import { WordValidator } from '../../validators';
+import { BaseChildService } from '../base-child-service';
 
-interface IProfileData {
-  name: string;
+interface IProfileData extends IProfileDto {
   accountId: string;
 }
 
-export class ProfileService extends BaseService {
-  private readonly profileNotFoundError = new InvalidRequestError(
-    'ProfileNotFound'
-  );
-
+export class ProfileService extends BaseChildService {
   constructor(private readonly repository: IProfileRepository) {
-    super(repository);
+    super(repository, new InvalidRequestError('ProfileNotFound'));
   }
 
   async createAsync(data: IProfileData): Promise<string> {
     const { name, accountId } = data;
+    this.validateName(name);
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
       id: newId,
@@ -31,11 +29,12 @@ export class ProfileService extends BaseService {
 
   async updateAsync(id: string, data: IProfileData) {
     const { name, accountId } = data;
+    this.validateName(name);
     const profile = await this.repository.getByIdAndParentIdAsync(
       id,
       accountId
     );
-    if (!profile) throw this.profileNotFoundError;
+    if (!profile) throw this.notFoundError;
     await this.repository.updateAsync(id, {
       name,
       updatedAt: this.getCurrentDate(),
@@ -47,29 +46,12 @@ export class ProfileService extends BaseService {
     await this.repository.deleteAsync(id);
   }
 
-  async getProfileAsync(id: string) {
-    const profile = await this.repository.getAsync(id);
-    if (!profile) throw this.profileNotFoundError;
-    return profile;
-  }
-
-  async getAllProfilesAsync() {
-    return await this.repository.getAllAsync();
-  }
-
-  async validateExistenceByIdAndParentIdAsync(
-    id: string,
-    accountId: string,
-    error: Error = this.profileNotFoundError
-  ) {
-    if (
-      !(await this.repository.checkExistenceByIdAndParentIdAsync(id, accountId))
-    )
-      throw error;
-  }
-
-  async checkExistenceByAccountId(accountId: string) {
+  async validateUniqueExistenceByParentId(accountId: string) {
     if (await this.repository.checkExistenceByParentIdAsync(accountId))
       throw new ConflictError('ProfileAlreadyCreated');
+  }
+
+  private validateName(name: string) {
+    WordValidator.validate(name);
   }
 }

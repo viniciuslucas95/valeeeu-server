@@ -1,8 +1,9 @@
+import { IProfileDto } from '../../../api/entities/dtos/profiles-dtos';
 import {
   createAccountAsync,
   deleteAccountAsync,
   generateRandomAccount,
-} from '../apis/account-api';
+} from '../../apis/account-api';
 import {
   createProfileAsync,
   deleteProfileAsync,
@@ -11,9 +12,9 @@ import {
   getAllProfilesAsync,
   getProfileAsync,
   updateProfileAsync,
-} from '../apis/profile-api';
+} from '../../apis/profile/profile-api';
 
-let profile: { name: string };
+let profile: IProfileDto;
 let profileId: string;
 let accountId: string;
 

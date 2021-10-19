@@ -1,4 +1,4 @@
-import { IReadRepository, IWriteRepository } from '.';
+import { IReadRepository, IWriteRepository } from './base-repository';
 import { Account } from '../../entities/models';
 
 export interface IAccountResultDto {
@@ -21,7 +21,7 @@ export interface IAccountRepository
     IWriteAccountRepository {}
 
 export interface IReadAccountRepository
-  extends Omit<IReadRepository<IAccountResultDto, unknown>, 'getAllAsync'> {
+  extends IReadRepository<IAccountResultDto, unknown> {
   getPrivilegedAsync(
     id: string
   ): Promise<IAccountPrivilegedResultDto | undefined>;

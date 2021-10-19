@@ -38,3 +38,27 @@ CREATE TABLE profile(
 	updated_at TIMESTAMP WITH TIME ZONE
 		NOT NULL
 );
+
+CREATE TABLE profile_contact(
+	id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_profile_contact_id
+		UNIQUE(id),
+	CONSTRAINT pk_profile_contact
+		PRIMARY KEY(id),
+	plataform VARCHAR
+		NOT NULL,
+	contact VARCHAR
+		NOT NULL,
+	profile_id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT fk_profile_contact_profile
+		FOREIGN KEY(profile_id)
+		REFERENCES profile(id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE
+		NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE
+		NOT NULL
+);

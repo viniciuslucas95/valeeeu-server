@@ -1,6 +1,7 @@
-import { IReadParentRepository, IWriteRepository } from '.';
+import { IWriteRepository } from './base-repository';
 import { Profile } from '../../entities/models';
 import { IReadRepository } from './base-repository';
+import { IReadParentRepository } from './parent-repository';
 
 export interface IIProfileSingleResultDto {
   name: string;

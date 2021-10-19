@@ -1,25 +1,34 @@
-import { Id } from '../../data-types/types';
-import { IDateDto, IProfileContactDataDto } from '../../entities/dtos';
-import { ProfileContact } from '../../entities/models';
+import { ProfileContact } from '../../entities/models/profile-contact';
+import { IReadRepository, IWriteRepository } from './base-repository';
+import { IReadParentRepository } from './parent-repository';
 
-export interface IProfileContactRepository {
-  createAsync(data: ProfileContact): Promise<void>;
-  updateAsync(
-    id: Id,
-    data: Omit<IProfileContactDataDto, 'profileId'> &
-      Omit<IDateDto, 'createdAt'>
-  ): Promise<void>;
-  deleteAsync(id: Id): Promise<void>;
-  getProfileContactAsync(
-    id: Id,
-    profileId?: Id
-  ): Promise<Omit<IProfileContactDataDto, 'profileId'> | undefined>;
-  //   getProfileAsync(id: Id): Promise<IProfileDataDto | undefined>;
-  //   getAllProfilesAsync(): Promise<IProfileDataDto[]>;
-  //   getProfileByIdsAsync(
-  //     id: Id,
-  //     accountId: Id
-  //   ): Promise<IProfileDataDto | undefined>;
-  //   checkExistenceAndRelationshipAsync(id: Id, accountId: Id): Promise<boolean>;
-  //   checkExistenceByAccountIdAsync(accountId: Id): Promise<boolean>;
+export interface IProfileContactUpdateDto {
+  plataform: string;
+  contact: string;
+  updatedAt: Date;
 }
+
+export interface IIProfileContactSingleResultDto {
+  plataform: string;
+  contact: string;
+}
+
+export interface IIProfileContactMultipleResultsDto {
+  id: string;
+  plataform: string;
+  contact: string;
+}
+
+export interface IProfileContactRepository
+  extends IProfileContactReadRepository,
+    IProfileContactWriteRepository {}
+
+export interface IProfileContactWriteRepository
+  extends IWriteRepository<ProfileContact, IProfileContactUpdateDto> {}
+
+export interface IProfileContactReadRepository
+  extends IReadRepository<
+      IIProfileContactSingleResultDto,
+      IIProfileContactMultipleResultsDto
+    >,
+    IReadParentRepository<IIProfileContactSingleResultDto> {}

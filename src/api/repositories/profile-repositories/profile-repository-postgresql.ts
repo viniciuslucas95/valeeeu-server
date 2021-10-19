@@ -1,12 +1,12 @@
-import { DatabaseConnection } from '../data-types/types';
-import { Profile } from '../entities/models';
-import { BaseRepositoryPostgresql } from './base-repository-postgresql';
+import { DatabaseConnection } from '../../data-types/types';
+import { Profile } from '../../entities/models';
+import { BaseRepositoryPostgresql } from '../base-repository-postgresql';
 import {
   IIProfileMultipleResultsDto,
   IIProfileSingleResultDto,
   IProfileRepository,
   IProfileUpdateDto,
-} from './interfaces';
+} from '../interfaces/profile-repository';
 
 export class ProfileRepositoryPostgresql
   extends BaseRepositoryPostgresql
@@ -60,7 +60,7 @@ export class ProfileRepositoryPostgresql
     return rows[0] ?? undefined;
   }
 
-  async getAllAsync(): Promise<IIProfileMultipleResultsDto[] | undefined> {
+  async getAllAsync(): Promise<IIProfileMultipleResultsDto[]> {
     const query = `SELECT id, name FROM ${this.tableName};`;
     const { rows } = await this.connection.query<IIProfileMultipleResultsDto>(
       query

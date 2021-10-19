@@ -8,4 +8,8 @@ export class RequestParamsHandler {
   static getProfileId(req: Request) {
     return { profileId: req.params.profileId };
   }
+
+  static getContactId(req: Request) {
+    return { contactId: req.params.contactId };
+  }
 }

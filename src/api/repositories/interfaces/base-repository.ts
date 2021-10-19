@@ -8,6 +8,6 @@ export interface IWriteRepository<Model extends BaseModel, Update> {
 
 export interface IReadRepository<SingleResult, MultipleResults> {
   getAsync(id: string): Promise<SingleResult | undefined>;
-  getAllAsync(): Promise<MultipleResults[] | undefined>;
+  getAllAsync(): Promise<MultipleResults[]>;
   checkExistenceAsync(id: string): Promise<boolean>;
 }

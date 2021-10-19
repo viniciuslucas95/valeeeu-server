@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IAccountCredentialsDto } from '../entities/dtos';
+import { IAccountDto } from '../entities/dtos';
 import { InvalidRequestError } from '../errors';
 import { AccountServiceFactory } from '../factories';
 import { RequestParamsHandler } from './request-params-handler';
@@ -52,14 +52,14 @@ export class AccountController {
       // Verify access token
       const { accountId } = RequestParamsHandler.getAccountId(req);
       const service = AccountServiceFactory.create();
-      const account = await service.getAccountAsync(accountId);
+      const account = await service.getAsync(accountId);
       res.status(200).json(account);
     } catch (err) {
       next(err);
     }
   }
 
-  private static getCredentials(req: Request): Partial<IAccountCredentialsDto> {
+  private static getCredentials(req: Request): Partial<IAccountDto> {
     const email = req.body.email?.toString() ?? undefined;
     const password = req.body.password?.toString() ?? undefined;
     return { email, password };
