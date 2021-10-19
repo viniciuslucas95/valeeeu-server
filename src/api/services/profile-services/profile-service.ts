@@ -1,4 +1,4 @@
-import { IProfileDto } from '../../entities/dtos/profiles-dtos';
+import { IProfileDto } from '../../entities/dtos/profile-dtos';
 import { ConflictError, InvalidRequestError } from '../../errors';
 import { IProfileRepository } from '../../repositories/interfaces/profile-repository';
 import { WordValidator } from '../../validators';

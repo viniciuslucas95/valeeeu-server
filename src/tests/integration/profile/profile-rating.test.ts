@@ -1,6 +1,6 @@
 import {
-  IProfileContactDto,
   IProfileDto,
+  IProfileRatingDto,
 } from '../../../api/entities/dtos/profile-dtos';
 import {
   createAccountAsync,
@@ -12,15 +12,16 @@ import {
   generateRandomProfile,
 } from '../../apis/profile/profile-api';
 import {
-  createProfileContactAsync,
-  deleteProfileContactAsync,
-  generateRandomContact,
-  generateRandomTitle,
-  updateProfileContactAsync,
-} from '../../apis/profile/profile-contact-api';
+  createProfileRatingAsync,
+  generateRandomComment,
+  generateRandomRatingNumber,
+  generateRandomRating,
+  updateProfileRatingAsync,
+  deleteProfileRatingAsync,
+} from '../../apis/profile/profile-rating-api';
 
-let contact: IProfileContactDto;
-let contactId: string;
+let rating: IProfileRatingDto;
+let ratingId: string;
 let profile: IProfileDto;
 let profileId: string;
 let accountId: string;
@@ -32,65 +33,65 @@ beforeAll(async () => {
   profile = generateRandomProfile();
   const { data: profileData } = await createProfileAsync(accountId, profile);
   profileId = profileData.id;
-  contact = generateRandomContact();
+  rating = generateRandomRating();
 });
 
-describe('Profile contact routes should', () => {
+describe('Profile rating routes should', () => {
   describe('succeed on', () => {
-    test('creating a new profile contact', async () => {
-      const { data, status } = await createProfileContactAsync(
+    test('creating a new profile rating', async () => {
+      const { status, data } = await createProfileRatingAsync(
         accountId,
         profileId,
-        contact
+        rating
       );
-      contactId = data.id;
+      ratingId = data.id;
       expect(status).toBe(201);
     });
 
-    describe('updating profile contact', () => {
-      test('plataform', async () => {
-        const { status } = await updateProfileContactAsync(
+    describe('updating profile rating', () => {
+      test('rating', async () => {
+        const { status } = await updateProfileRatingAsync(
           accountId,
           profileId,
-          contactId,
+          ratingId,
           {
-            plataform: generateRandomTitle(),
+            rating: generateRandomRatingNumber(),
           }
         );
         expect(status).toBe(204);
       });
 
-      test('contact', async () => {
-        const { status } = await updateProfileContactAsync(
+      test('comment', async () => {
+        const { status } = await updateProfileRatingAsync(
           accountId,
           profileId,
-          contactId,
+          ratingId,
           {
-            contact: generateRandomTitle(),
+            comment: generateRandomComment(),
           }
         );
         expect(status).toBe(204);
       });
 
-      test('plataform and contact', async () => {
-        const { status } = await updateProfileContactAsync(
+      test('rating and comment', async () => {
+        const { status } = await updateProfileRatingAsync(
           accountId,
           profileId,
-          contactId,
+          ratingId,
           {
-            plataform: generateRandomTitle(),
-            contact: generateRandomTitle(),
+            rating: generateRandomRatingNumber(),
+            comment: generateRandomComment(),
           }
         );
         expect(status).toBe(204);
       });
     });
 
-    test('deleting profile contact', async () => {
-      const { status } = await deleteProfileContactAsync(
+    test('deleting profile rating', async () => {
+      const { status } = await deleteProfileRatingAsync(
         accountId,
         profileId,
-        contactId
+        ratingId
       );
       expect(status).toBe(204);
     });

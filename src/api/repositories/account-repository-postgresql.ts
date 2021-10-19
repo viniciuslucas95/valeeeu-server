@@ -1,10 +1,9 @@
 import { DatabaseConnection } from '../data-types/types';
+import { IAccountDto } from '../entities/dtos';
 import { Account } from '../entities/models';
 import { BaseRepositoryPostgresql } from './base-repository-postgresql';
 import {
-  IAccountPrivilegedResultDto,
   IAccountRepository,
-  IAccountResultDto,
   IAccountUpdateDto,
 } from './interfaces/account-repository';
 
@@ -39,22 +38,20 @@ export class AccountRepositoryPostgresql
     await this.connection.query(query, [id]);
   }
 
-  async getAsync(id: string): Promise<IAccountResultDto | undefined> {
-    const query = `SELECT email FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<IAccountResultDto>(query, [
-      id,
-    ]);
-    return rows[0] ?? undefined;
-  }
-
-  async getPrivilegedAsync(
+  async getAsync(
     id: string
-  ): Promise<IAccountPrivilegedResultDto | undefined> {
-    const query = `SELECT email, password FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<IAccountPrivilegedResultDto>(
+  ): Promise<Omit<IAccountDto, 'password'> | undefined> {
+    const query = `SELECT email FROM ${this.tableName} WHERE id = $1`;
+    const { rows } = await this.connection.query<Omit<IAccountDto, 'password'>>(
       query,
       [id]
     );
+    return rows[0] ?? undefined;
+  }
+
+  async getPrivilegedAsync(id: string): Promise<IAccountDto | undefined> {
+    const query = `SELECT email, password FROM ${this.tableName} WHERE id = $1`;
+    const { rows } = await this.connection.query<IAccountDto>(query, [id]);
     return rows[0] ?? undefined;
   }
 

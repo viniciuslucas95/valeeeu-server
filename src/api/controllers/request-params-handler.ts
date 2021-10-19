@@ -12,4 +12,8 @@ export class RequestParamsHandler {
   static getContactId(req: Request) {
     return { contactId: req.params.contactId };
   }
+
+  static getRatingId(req: Request) {
+    return { ratingId: req.params.ratingId };
+  }
 }

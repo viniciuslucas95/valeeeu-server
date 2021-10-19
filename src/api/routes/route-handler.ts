@@ -1,8 +1,11 @@
 import { Express } from 'express';
 import { ErrorMiddleware } from '../middlewares';
 import { AccountRouter } from './account-router';
-import { ProfileContactRouter } from './profile-contact-router';
-import { ProfileRouter } from './profile-router';
+import {
+  ProfileContactRouter,
+  ProfileRouter,
+  ProfileRatingRouter,
+} from './profile';
 
 export class RouteHandler {
   static setup(server: Express) {
@@ -10,5 +13,6 @@ export class RouteHandler {
     server.use('/', AccountRouter.create(), handleError);
     server.use('/', ProfileRouter.create(), handleError);
     server.use('/', ProfileContactRouter.create(), handleError);
+    server.use('/', ProfileRatingRouter.create(), handleError);
   }
 }

@@ -62,22 +62,22 @@ describe('Account routes should', () => {
   });
 
   describe('succeed on', () => {
-    describe('updating', () => {
-      test('account email', async () => {
+    describe('updating account', () => {
+      test('email', async () => {
         const { status } = await updateAccountAsync(accountId, {
           email: generateRandomEmail(),
         });
         expect(status).toBe(204);
       });
 
-      test('account password', async () => {
+      test('password', async () => {
         const { status } = await updateAccountAsync(accountId, {
           password: generateRandomPassword(),
         });
         expect(status).toBe(204);
       });
 
-      test('both account credentials', async () => {
+      test('email and password', async () => {
         const { status } = await updateAccountAsync(accountId, {
           email: generateRandomEmail(),
           password: generateRandomPassword(),
@@ -98,8 +98,8 @@ describe('Account routes should', () => {
   });
 
   describe('fail on', () => {
-    describe('creating a new account', () => {
-      test('because of wrong email format', async () => {
+    describe('creating a new account because of', () => {
+      test('wrong email format', async () => {
         const { status } = await createAccountAsync({
           email: 'kakaka@gmail',
           password: '123456',
@@ -107,7 +107,7 @@ describe('Account routes should', () => {
         expect(status).toBe(400);
       });
 
-      test('because of short password', async () => {
+      test('short password', async () => {
         const { status } = await createAccountAsync({
           email: 'lulululu@gmail.com',
           password: '123',
@@ -115,14 +115,14 @@ describe('Account routes should', () => {
         expect(status).toBe(400);
       });
 
-      test('because of null email', async () => {
+      test('null email', async () => {
         const { status } = await createAccountAsync({
           password: '1234567',
         });
         expect(status).toBe(400);
       });
 
-      test('because of null password', async () => {
+      test('null password', async () => {
         const { status } = await createAccountAsync({
           email: 'lalalalalala@gmail.com',
         });

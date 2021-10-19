@@ -1,22 +1,3 @@
-CREATE TABLE account(
-	id VARCHAR(32)
-		NOT NULL,
-	CONSTRAINT unique_account_id
-		UNIQUE(id),
-	CONSTRAINT pk_account
-		PRIMARY KEY(id),
-	email VARCHAR
-		NOT NULL,
-	CONSTRAINT unique_account_email
-		UNIQUE(email),
-	password VARCHAR
-		NOT NULL,
-	created_at TIMESTAMP WITH TIME ZONE
-		NOT NULL,
-	updated_at TIMESTAMP WITH TIME ZONE
-		NOT NULL
-);
-
 CREATE TABLE profile(
 	id VARCHAR(32)
 		NOT NULL,
@@ -53,6 +34,30 @@ CREATE TABLE profile_contact(
 	profile_id VARCHAR(32)
 		NOT NULL,
 	CONSTRAINT fk_profile_contact_profile
+		FOREIGN KEY(profile_id)
+		REFERENCES profile(id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE
+		NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE
+		NOT NULL
+);
+
+CREATE TABLE profile_rating(
+	id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT unique_profile_rating_id
+		UNIQUE(id),
+	CONSTRAINT pk_profile_rating
+		PRIMARY KEY(id),
+	rating SMALLINT
+		NOT NULL,
+	comment VARCHAR
+		NOT NULL,
+	profile_id VARCHAR(32)
+		NOT NULL,
+	CONSTRAINT fk_profile_rating_profile
 		FOREIGN KEY(profile_id)
 		REFERENCES profile(id)
 		ON DELETE CASCADE

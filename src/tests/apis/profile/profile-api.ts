@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { name } from 'faker';
-import { IProfileDto } from '../../../api/entities/dtos/profiles-dtos';
+import { IProfileDto } from '../../../api/entities/dtos/profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
 import { axiosConfig } from '../../axios-config';
 

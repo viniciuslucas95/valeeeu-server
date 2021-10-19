@@ -1,4 +1,4 @@
-import { IProfileDto } from '../../../api/entities/dtos/profiles-dtos';
+import { IProfileDto } from '../../../api/entities/dtos/profile-dtos';
 import {
   createAccountAsync,
   deleteAccountAsync,

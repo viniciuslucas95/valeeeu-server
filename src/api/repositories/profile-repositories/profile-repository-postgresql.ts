@@ -1,12 +1,12 @@
 import { DatabaseConnection } from '../../data-types/types';
-import { Profile } from '../../entities/models';
+import { IProfileDto } from '../../entities/dtos/profile-dtos';
+import { Profile } from '../../entities/models/profile';
 import { BaseRepositoryPostgresql } from '../base-repository-postgresql';
 import {
   IIProfileMultipleResultsDto,
-  IIProfileSingleResultDto,
   IProfileRepository,
   IProfileUpdateDto,
-} from '../interfaces/profile-repository';
+} from '../interfaces/profile/profile-repository';
 
 export class ProfileRepositoryPostgresql
   extends BaseRepositoryPostgresql
@@ -39,24 +39,21 @@ export class ProfileRepositoryPostgresql
     await this.connection.query(query, [id]);
   }
 
-  async getAsync(id: string): Promise<IIProfileSingleResultDto | undefined> {
+  async getAsync(id: string): Promise<IProfileDto | undefined> {
     const query = `SELECT name FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<IIProfileSingleResultDto>(
-      query,
-      [id]
-    );
+    const { rows } = await this.connection.query<IProfileDto>(query, [id]);
     return rows[0] ?? undefined;
   }
 
   async getByIdAndParentIdAsync(
     id: string,
     parentId: string
-  ): Promise<IIProfileSingleResultDto> {
+  ): Promise<IProfileDto | undefined> {
     const query = `SELECT name FROM ${this.tableName} WHERE id = $1 AND account_id = $2`;
-    const { rows } = await this.connection.query<IIProfileSingleResultDto>(
-      query,
-      [id, parentId]
-    );
+    const { rows } = await this.connection.query<IProfileDto>(query, [
+      id,
+      parentId,
+    ]);
     return rows[0] ?? undefined;
   }
 

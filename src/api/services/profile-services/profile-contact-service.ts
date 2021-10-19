@@ -1,6 +1,6 @@
-import { IProfileContactDto } from '../../entities/dtos/profiles-dtos';
+import { IProfileContactDto } from '../../entities/dtos/profile-dtos';
 import { InvalidRequestError } from '../../errors';
-import { IProfileContactRepository } from '../../repositories/interfaces/profile-contact-repository';
+import { IProfileContactRepository } from '../../repositories/interfaces/profile/profile-contact-repository';
 import { WordValidator } from '../../validators';
 import { BaseChildService } from '../base-child-service';
 
@@ -22,8 +22,8 @@ export class ProfileContactService extends BaseChildService {
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
       id: newId,
-      plataform,
-      contact,
+      plataform: this.getValidatedPlataform(plataform),
+      contact: this.getValidatedContact(contact),
       profileId,
       createdAt: currentDate,
       updatedAt: currentDate,

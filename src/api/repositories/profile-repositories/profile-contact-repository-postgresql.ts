@@ -1,12 +1,12 @@
 import { DatabaseConnection } from '../../data-types/types';
-import { ProfileContact } from '../../entities/models/profile-contact';
+import { IProfileContactDto } from '../../entities/dtos/profile-dtos';
+import { ProfileContact } from '../../entities/models/profile/profile-contact';
 import { BaseRepositoryPostgresql } from '../base-repository-postgresql';
 import {
   IIProfileContactMultipleResultsDto,
-  IIProfileContactSingleResultDto,
   IProfileContactRepository,
   IProfileContactUpdateDto,
-} from '../interfaces/profile-contact-repository';
+} from '../interfaces/profile/profile-contact-repository';
 
 export class ProfileContactRepositoryPostgresql
   extends BaseRepositoryPostgresql
@@ -40,25 +40,23 @@ export class ProfileContactRepositoryPostgresql
     await this.connection.query(query, [id]);
   }
 
-  async getAsync(
-    id: string
-  ): Promise<IIProfileContactSingleResultDto | undefined> {
+  async getAsync(id: string): Promise<IProfileContactDto | undefined> {
     const query = `SELECT plataform, contact FROM ${this.tableName} WHERE id = $1`;
-    const { rows } =
-      await this.connection.query<IIProfileContactSingleResultDto>(query, [id]);
+    const { rows } = await this.connection.query<IProfileContactDto>(query, [
+      id,
+    ]);
     return rows[0] ?? undefined;
   }
 
   async getByIdAndParentIdAsync(
     id: string,
     parentId: string
-  ): Promise<IIProfileContactSingleResultDto> {
+  ): Promise<IProfileContactDto | undefined> {
     const query = `SELECT plataform, contact FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
-    const { rows } =
-      await this.connection.query<IIProfileContactSingleResultDto>(query, [
-        id,
-        parentId,
-      ]);
+    const { rows } = await this.connection.query<IProfileContactDto>(query, [
+      id,
+      parentId,
+    ]);
     return rows[0] ?? undefined;
   }
 
@@ -71,17 +69,17 @@ export class ProfileContactRepositoryPostgresql
 
   async checkExistenceAsync(id: string): Promise<boolean> {
     const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
-    const { rows } =
-      await this.connection.query<IIProfileContactSingleResultDto>(query, [id]);
+    const { rows } = await this.connection.query<IProfileContactDto>(query, [
+      id,
+    ]);
     return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
     const query = `SELECT profile_id FROM ${this.tableName} WHERE profile_id = $1`;
-    const { rows } =
-      await this.connection.query<IIProfileContactSingleResultDto>(query, [
-        parentId,
-      ]);
+    const { rows } = await this.connection.query<IProfileContactDto>(query, [
+      parentId,
+    ]);
     return rows[0] ? true : false;
   }
 
@@ -90,11 +88,10 @@ export class ProfileContactRepositoryPostgresql
     parentId: string
   ): Promise<boolean> {
     const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
-    const { rows } =
-      await this.connection.query<IIProfileContactSingleResultDto>(query, [
-        id,
-        parentId,
-      ]);
+    const { rows } = await this.connection.query<IProfileContactDto>(query, [
+      id,
+      parentId,
+    ]);
     return rows[0] ? true : false;
   }
 }

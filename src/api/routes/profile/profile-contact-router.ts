@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ProfileContactController } from '../controllers';
+import { ProfileContactController } from '../../controllers/profile';
 
 export class ProfileContactRouter {
   static create() {

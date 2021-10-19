@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { IProfileContactDto } from '../entities/dtos/profiles-dtos';
-import { InvalidRequestError } from '../errors';
+import { IProfileContactDto } from '../../entities/dtos/profile-dtos';
+import { InvalidRequestError } from '../../errors';
 import {
   ProfileContactServiceFactory,
   ProfileServiceFactory,
-} from '../factories/profile-factories';
-import { RequestParamsHandler } from './request-params-handler';
+} from '../../factories/profile-factories';
+import { RequestParamsHandler } from '../request-params-handler';
 
 export class ProfileContactController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {

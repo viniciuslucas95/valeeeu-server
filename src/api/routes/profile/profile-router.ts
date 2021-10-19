@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ProfileController } from '../controllers';
+import { ProfileController } from '../../controllers/profile';
 
 export class ProfileRouter {
   static create() {
