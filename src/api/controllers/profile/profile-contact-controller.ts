@@ -79,11 +79,10 @@ export class ProfileContactController {
     try {
       const { profileId, contactId } = ProfileContactController.getIds(req);
       const profileContactService = ProfileContactServiceFactory.create();
-      await profileContactService.validateExistenceByIdAndParentIdAsync(
+      const result = await profileContactService.getByIdAndParentIdAsync(
         contactId,
         profileId
       );
-      const result = profileContactService.getAsync(contactId);
       res.status(200).json(result);
     } catch (err) {
       next(err);

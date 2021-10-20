@@ -5,7 +5,10 @@ import { BaseService } from './base-service';
 
 export abstract class BaseChildService extends BaseService {
   constructor(
-    private readonly baseChildRepository: IReadParentRepository<unknown> &
+    private readonly baseChildRepository: IReadParentRepository<
+      unknown,
+      unknown
+    > &
       IReadRepository<unknown, unknown>,
     notFoundError: InvalidRequestError
   ) {

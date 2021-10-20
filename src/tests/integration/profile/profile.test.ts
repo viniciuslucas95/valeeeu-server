@@ -41,12 +41,14 @@ describe('Profile routes should', () => {
     });
 
     test('getting profile', async () => {
-      const { status } = await getProfileAsync(profileId);
+      const { status, data } = await getProfileAsync(profileId);
+      expect(data).toBeTruthy();
       expect(status).toBe(200);
     });
 
     test('getting all profiles', async () => {
-      const { status } = await getAllProfilesAsync();
+      const { status, data } = await getAllProfilesAsync();
+      expect(data).toHaveLength(1);
       expect(status).toBe(200);
     });
 

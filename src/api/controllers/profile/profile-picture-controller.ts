@@ -75,11 +75,10 @@ export class ProfilePictureController {
     try {
       const { profileId, pictureId } = ProfilePictureController.getIds(req);
       const profilePictureService = ProfilePictureServiceFactory.create();
-      await profilePictureService.validateExistenceByIdAndParentIdAsync(
+      const result = await profilePictureService.getByIdAndParentIdAsync(
         pictureId,
         profileId
       );
-      const result = profilePictureService.getAsync(pictureId);
       res.status(200).json(result);
     } catch (err) {
       next(err);

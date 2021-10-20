@@ -14,6 +14,8 @@ import {
 import {
   createProfilePictureAsync,
   deleteProfilePictureAsync,
+  getAllProfilePicturesAsync,
+  getProfilePictureAsync,
   updateProfilePictureAsync,
 } from '../../apis/profile/profile-picture-api';
 import { getJpgPicture, getPngPicture } from '../../example-picture-handler';
@@ -44,6 +46,21 @@ describe('Profile picture routes should', () => {
       );
       pictureId = data.id;
       expect(status).toBe(201);
+    });
+
+    test('getting profile picture', async () => {
+      const { status, data } = await getProfilePictureAsync(
+        profileId,
+        pictureId
+      );
+      expect(data).toBeTruthy();
+      expect(status).toBe(200);
+    });
+
+    test('getting all profile pictures', async () => {
+      const { status, data } = await getAllProfilePicturesAsync(profileId);
+      expect(data).toHaveLength(1);
+      expect(status).toBe(200);
     });
 
     test('updating profile picture', async () => {

@@ -19,6 +19,8 @@ import {
 import {
   createServiceProfilePictureAsync,
   deleteServiceProfilePictureAsync,
+  getAllServiceProfilePicturesAsync,
+  getServiceProfilePictureAsync,
   updateServiceProfilePictureAsync,
 } from '../../apis/service-profile/service-profile-picture-api';
 import { getJpgPicture, getPngPicture } from '../../example-picture-handler';
@@ -59,6 +61,25 @@ describe('Service picture routes should', () => {
       );
       serviceProfilePictureId = data.id;
       expect(status).toBe(201);
+    });
+
+    test('getting service profile picture', async () => {
+      const { status, data } = await getServiceProfilePictureAsync(
+        profileId,
+        serviceProfileId,
+        serviceProfilePictureId
+      );
+      expect(data).toBeTruthy();
+      expect(status).toBe(200);
+    });
+
+    test('getting all service pictures', async () => {
+      const { status, data } = await getAllServiceProfilePicturesAsync(
+        profileId,
+        serviceProfileId
+      );
+      expect(data).toHaveLength(1);
+      expect(status).toBe(200);
     });
 
     test('updating service picture', async () => {

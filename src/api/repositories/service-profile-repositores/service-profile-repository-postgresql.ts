@@ -55,17 +55,27 @@ export class ServiceProfileRepositoryPostgresql
   }
 
   async getAllAsync(): Promise<IServiceProfileMultipleResultsDto[]> {
-    const query = `SELECT id, description FROM ${this.tableName};`;
+    const query = `SELECT id, profile_id FROM ${this.tableName};`;
     const { rows } = await this.connection.query(query);
-    return rows;
+    return rows.map((row) => {
+      return {
+        id: row.id,
+        profileId: row.profile_id,
+      };
+    });
   }
 
   async getAllByParentIdAsync(
     parentId: string
   ): Promise<IServiceProfileMultipleResultsDto[]> {
-    const query = `SELECT id, description FROM ${this.tableName} WHERE profile_id = $1;`;
+    const query = `SELECT id, profile_id FROM ${this.tableName} WHERE profile_id = $1;`;
     const { rows } = await this.connection.query(query, [parentId]);
-    return rows;
+    return rows.map((row) => {
+      return {
+        id: row.id,
+        profileId: row.profile_id,
+      };
+    });
   }
 
   async checkExistenceAsync(id: string): Promise<boolean> {

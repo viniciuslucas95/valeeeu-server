@@ -18,6 +18,8 @@ import {
   generateRandomRating,
   updateProfileRatingAsync,
   deleteProfileRatingAsync,
+  getAllProfileRatingsAsync,
+  getProfileRatingAsync,
 } from '../../apis/profile/profile-rating-api';
 
 let rating: IProfileRatingDto;
@@ -46,6 +48,18 @@ describe('Profile rating routes should', () => {
       );
       ratingId = data.id;
       expect(status).toBe(201);
+    });
+
+    test('getting profile rating', async () => {
+      const { status, data } = await getProfileRatingAsync(profileId, ratingId);
+      expect(data).toBeTruthy();
+      expect(status).toBe(200);
+    });
+
+    test('getting all profile ratings', async () => {
+      const { status, data } = await getAllProfileRatingsAsync(profileId);
+      expect(data).toHaveLength(1);
+      expect(status).toBe(200);
     });
 
     describe('updating profile rating', () => {

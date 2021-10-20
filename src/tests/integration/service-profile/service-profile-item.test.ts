@@ -22,6 +22,8 @@ import {
   deleteServiceProfileItemAsync,
   generateRandomPrice,
   generateRandomServiceProfileItem,
+  getAllServiceProfileItemsAsync,
+  getServiceProfileItemAsync,
   updateServiceProfileItemAsync,
 } from '../../apis/service-profile/service-profile-item-api';
 
@@ -61,6 +63,25 @@ describe('Service item routes should', () => {
       );
       serviceProfileItemId = data.id;
       expect(status).toBe(201);
+    });
+
+    test('getting service profile item', async () => {
+      const { status, data } = await getServiceProfileItemAsync(
+        profileId,
+        serviceProfileId,
+        serviceProfileItemId
+      );
+      expect(data).toBeTruthy();
+      expect(status).toBe(200);
+    });
+
+    test('getting all service items', async () => {
+      const { status, data } = await getAllServiceProfileItemsAsync(
+        profileId,
+        serviceProfileId
+      );
+      expect(data).toHaveLength(1);
+      expect(status).toBe(200);
     });
 
     describe('updating service item', () => {

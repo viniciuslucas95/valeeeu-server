@@ -16,6 +16,8 @@ import {
   deleteProfileContactAsync,
   generateRandomContact,
   generateRandomTitle,
+  getAllProfileContactsAsync,
+  getProfileContactAsync,
   updateProfileContactAsync,
 } from '../../apis/profile/profile-contact-api';
 
@@ -45,6 +47,21 @@ describe('Profile contact routes should', () => {
       );
       contactId = data.id;
       expect(status).toBe(201);
+    });
+
+    test('getting profile contact', async () => {
+      const { status, data } = await getProfileContactAsync(
+        profileId,
+        contactId
+      );
+      expect(data).toBeTruthy();
+      expect(status).toBe(200);
+    });
+
+    test('getting all profile contacts', async () => {
+      const { status, data } = await getAllProfileContactsAsync(profileId);
+      expect(data).toHaveLength(1);
+      expect(status).toBe(200);
     });
 
     describe('updating profile contact', () => {

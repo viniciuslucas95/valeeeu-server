@@ -14,6 +14,8 @@ import {
   createServiceProfileAsync,
   deleteServiceProfileAsync,
   generateRandomServiceProfile,
+  getAllServiceProfilesAsync,
+  getServiceProfileAsync,
   updateServiceProfileAsync,
 } from '../../apis/service-profile/service-profile-api';
 
@@ -43,6 +45,21 @@ describe('Service routes should', () => {
       );
       serviceProfileId = data.id;
       expect(status).toBe(201);
+    });
+
+    test('getting service profile', async () => {
+      const { status, data } = await getServiceProfileAsync(
+        profileId,
+        serviceProfileId
+      );
+      expect(data).toBeTruthy();
+      expect(status).toBe(200);
+    });
+
+    test('getting all service profiles', async () => {
+      const { status, data } = await getAllServiceProfilesAsync();
+      expect(data).toHaveLength(1);
+      expect(status).toBe(200);
     });
 
     test('updating service profile description', async () => {

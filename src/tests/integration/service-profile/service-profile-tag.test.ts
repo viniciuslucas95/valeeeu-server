@@ -21,6 +21,8 @@ import {
   createServiceProfileTagAsync,
   deleteServiceProfileTagAsync,
   generateRandomServiceProfileTag,
+  getAllServiceProfileTagsAsync,
+  getServiceProfileTagAsync,
   updateServiceProfileTagAsync,
 } from '../../apis/service-profile/service-profile-tag-api';
 
@@ -60,6 +62,25 @@ describe('Service tag routes should', () => {
       );
       serviceProfileTagId = data.id;
       expect(status).toBe(201);
+    });
+
+    test('getting service profile tag', async () => {
+      const { status, data } = await getServiceProfileTagAsync(
+        profileId,
+        serviceProfileId,
+        serviceProfileTagId
+      );
+      expect(data).toBeTruthy();
+      expect(status).toBe(200);
+    });
+
+    test('getting all service tags', async () => {
+      const { status, data } = await getAllServiceProfileTagsAsync(
+        profileId,
+        serviceProfileId
+      );
+      expect(data).toHaveLength(1);
+      expect(status).toBe(200);
     });
 
     test('updating service tag', async () => {

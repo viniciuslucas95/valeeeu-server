@@ -87,7 +87,8 @@ describe('Account routes should', () => {
     });
 
     test('getting account', async () => {
-      const { status } = await getAccountAsync(accountId);
+      const { status, data } = await getAccountAsync(accountId);
+      expect(data).toBeTruthy();
       expect(status).toBe(200);
     });
 

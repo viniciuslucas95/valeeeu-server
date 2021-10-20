@@ -16,11 +16,11 @@ export class ServiceProfileRouter {
       '/accounts/:accountId/profiles/:profileId/services/:serviceId',
       ServiceProfileController.deleteAsync
     );
+    router.get('/profiles/services', ServiceProfileController.getAllAsync);
     router.get(
       '/profiles/:profileId/services/:serviceId',
       ServiceProfileController.getAsync
     );
-    router.get('/profiles/services', ServiceProfileController.getAllAsync);
     return router;
   }
 }

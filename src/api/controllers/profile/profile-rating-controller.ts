@@ -79,11 +79,10 @@ export class ProfileRatingController {
     try {
       const { profileId, ratingId } = ProfileRatingController.getIds(req);
       const profileRatingService = ProfileRatingServiceFactory.create();
-      await profileRatingService.validateExistenceByIdAndParentIdAsync(
+      const result = await profileRatingService.getByIdAndParentIdAsync(
         ratingId,
         profileId
       );
-      const result = profileRatingService.getAsync(ratingId);
       res.status(200).json(result);
     } catch (err) {
       next(err);
