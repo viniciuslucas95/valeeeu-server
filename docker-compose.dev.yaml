@@ -14,6 +14,7 @@ services:
     container_name: valeeeu_dev_server
     restart: always
     volumes:
+      - ./public:/usr/server/public
       - ./src:/usr/server/src
       - ./package.json:/usr/server/package.json
       - ./tsconfig.json:/usr/server/tsconfig.json
