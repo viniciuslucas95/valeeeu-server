@@ -3,7 +3,7 @@ import { Profile } from '../../../entities/models/profile';
 import { IReadRepository, IWriteRepository } from '../base-repository';
 import { IReadParentRepository } from '../parent-repository';
 
-export interface IIProfileMultipleResultsDto extends IProfileDto {
+export interface IProfileMultipleResultsDto extends IProfileDto {
   id: string;
 }
 
@@ -19,5 +19,5 @@ export interface IWriteProfileRepository
   extends IWriteRepository<Profile, IProfileUpdateDto> {}
 
 export interface IReadProfileRepository
-  extends IReadRepository<IProfileDto, IIProfileMultipleResultsDto>,
+  extends IReadRepository<IProfileDto, IProfileMultipleResultsDto>,
     IReadParentRepository<IProfileDto> {}

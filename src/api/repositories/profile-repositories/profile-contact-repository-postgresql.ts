@@ -42,9 +42,7 @@ export class ProfileContactRepositoryPostgresql
 
   async getAsync(id: string): Promise<IProfileContactDto | undefined> {
     const query = `SELECT plataform, contact FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<IProfileContactDto>(query, [
-      id,
-    ]);
+    const { rows } = await this.connection.query(query, [id]);
     return rows[0] ?? undefined;
   }
 
@@ -53,33 +51,25 @@ export class ProfileContactRepositoryPostgresql
     parentId: string
   ): Promise<IProfileContactDto | undefined> {
     const query = `SELECT plataform, contact FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
-    const { rows } = await this.connection.query<IProfileContactDto>(query, [
-      id,
-      parentId,
-    ]);
+    const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ?? undefined;
   }
 
   async getAllAsync(): Promise<IIProfileContactMultipleResultsDto[]> {
     const query = `SELECT plataform, contact FROM ${this.tableName}`;
-    const { rows } =
-      await this.connection.query<IIProfileContactMultipleResultsDto>(query);
+    const { rows } = await this.connection.query(query);
     return rows;
   }
 
   async checkExistenceAsync(id: string): Promise<boolean> {
     const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<IProfileContactDto>(query, [
-      id,
-    ]);
+    const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
     const query = `SELECT profile_id FROM ${this.tableName} WHERE profile_id = $1`;
-    const { rows } = await this.connection.query<IProfileContactDto>(query, [
-      parentId,
-    ]);
+    const { rows } = await this.connection.query(query, [parentId]);
     return rows[0] ? true : false;
   }
 
@@ -88,10 +78,7 @@ export class ProfileContactRepositoryPostgresql
     parentId: string
   ): Promise<boolean> {
     const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
-    const { rows } = await this.connection.query<IProfileContactDto>(query, [
-      id,
-      parentId,
-    ]);
+    const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ? true : false;
   }
 }

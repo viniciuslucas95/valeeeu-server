@@ -33,31 +33,26 @@ export class ProfileRatingService extends BaseChildService {
 
   async updateAsync(id: string, data: IProfileRatingUpdateData) {
     const { profileId, comment, rating } = data;
-    const profileRating = await this.repository.getByIdAndParentIdAsync(
-      id,
-      profileId
-    );
-    if (!profileRating) throw this.notFoundError;
+    const result = await this.repository.getByIdAndParentIdAsync(id, profileId);
+    if (!result) throw this.notFoundError;
     await this.repository.updateAsync(id, {
-      rating: rating ? this.getValidatedRating(rating) : profileRating.rating,
-      comment: comment
-        ? this.getValidatedComment(comment)
-        : profileRating.comment,
+      rating: rating ? this.getValidatedRating(rating) : result.rating,
+      comment: comment ? this.getValidatedComment(comment) : result.comment,
       updatedAt: this.getCurrentDate(),
     });
   }
 
-  async deleteAsync(id: string, profileId: string) {
-    await this.validateExistenceByIdAndParentIdAsync(id, profileId);
+  async deleteAsync(id: string, parentId: string) {
+    await this.validateExistenceByIdAndParentIdAsync(id, parentId);
     await this.repository.deleteAsync(id);
   }
 
-  private getValidatedRating(rating: number) {
-    RatingValidator.validate(rating);
-    return rating;
+  private getValidatedRating(value: number) {
+    RatingValidator.validate(value);
+    return value;
   }
 
-  private getValidatedComment(comment: string) {
-    return comment;
+  private getValidatedComment(value: string) {
+    return value;
   }
 }

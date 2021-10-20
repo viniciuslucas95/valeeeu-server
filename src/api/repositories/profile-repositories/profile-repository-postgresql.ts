@@ -3,7 +3,7 @@ import { IProfileDto } from '../../entities/dtos/profile-dtos';
 import { Profile } from '../../entities/models/profile';
 import { BaseRepositoryPostgresql } from '../base-repository-postgresql';
 import {
-  IIProfileMultipleResultsDto,
+  IProfileMultipleResultsDto,
   IProfileRepository,
   IProfileUpdateDto,
 } from '../interfaces/profile/profile-repository';
@@ -41,7 +41,7 @@ export class ProfileRepositoryPostgresql
 
   async getAsync(id: string): Promise<IProfileDto | undefined> {
     const query = `SELECT name FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<IProfileDto>(query, [id]);
+    const { rows } = await this.connection.query(query, [id]);
     return rows[0] ?? undefined;
   }
 
@@ -50,18 +50,13 @@ export class ProfileRepositoryPostgresql
     parentId: string
   ): Promise<IProfileDto | undefined> {
     const query = `SELECT name FROM ${this.tableName} WHERE id = $1 AND account_id = $2`;
-    const { rows } = await this.connection.query<IProfileDto>(query, [
-      id,
-      parentId,
-    ]);
+    const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ?? undefined;
   }
 
-  async getAllAsync(): Promise<IIProfileMultipleResultsDto[]> {
+  async getAllAsync(): Promise<IProfileMultipleResultsDto[]> {
     const query = `SELECT id, name FROM ${this.tableName};`;
-    const { rows } = await this.connection.query<IIProfileMultipleResultsDto>(
-      query
-    );
+    const { rows } = await this.connection.query(query);
     return rows;
   }
 

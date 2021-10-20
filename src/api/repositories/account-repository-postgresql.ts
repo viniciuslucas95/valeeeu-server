@@ -42,16 +42,13 @@ export class AccountRepositoryPostgresql
     id: string
   ): Promise<Omit<IAccountDto, 'password'> | undefined> {
     const query = `SELECT email FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<Omit<IAccountDto, 'password'>>(
-      query,
-      [id]
-    );
+    const { rows } = await this.connection.query(query, [id]);
     return rows[0] ?? undefined;
   }
 
   async getPrivilegedAsync(id: string): Promise<IAccountDto | undefined> {
     const query = `SELECT email, password FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<IAccountDto>(query, [id]);
+    const { rows } = await this.connection.query(query, [id]);
     return rows[0] ?? undefined;
   }
 

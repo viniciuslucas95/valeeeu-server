@@ -1,6 +1,6 @@
 import { IProfileDto } from '../../entities/dtos/profile-dtos';
 import { ConflictError, InvalidRequestError } from '../../errors';
-import { IProfileRepository } from '../../repositories/interfaces/profile-repository';
+import { IProfileRepository } from '../../repositories/interfaces/profile/profile-repository';
 import { WordValidator } from '../../validators';
 import { BaseChildService } from '../base-child-service';
 
@@ -30,28 +30,25 @@ export class ProfileService extends BaseChildService {
   async updateAsync(id: string, data: IProfileData) {
     const { name, accountId } = data;
     this.validateName(name);
-    const profile = await this.repository.getByIdAndParentIdAsync(
-      id,
-      accountId
-    );
-    if (!profile) throw this.notFoundError;
+    const result = await this.repository.getByIdAndParentIdAsync(id, accountId);
+    if (!result) throw this.notFoundError;
     await this.repository.updateAsync(id, {
       name,
       updatedAt: this.getCurrentDate(),
     });
   }
 
-  async deleteAsync(id: string, accountId: string) {
-    await this.validateExistenceByIdAndParentIdAsync(id, accountId);
+  async deleteAsync(id: string, parentId: string) {
+    await this.validateExistenceByIdAndParentIdAsync(id, parentId);
     await this.repository.deleteAsync(id);
   }
 
-  async validateUniqueExistenceByParentId(accountId: string) {
-    if (await this.repository.checkExistenceByParentIdAsync(accountId))
+  async validateUniqueExistenceByParentId(parentId: string) {
+    if (await this.repository.checkExistenceByParentIdAsync(parentId))
       throw new ConflictError('ProfileAlreadyCreated');
   }
 
-  private validateName(name: string) {
-    WordValidator.validate(name);
+  private validateName(value: string) {
+    WordValidator.validate(value);
   }
 }

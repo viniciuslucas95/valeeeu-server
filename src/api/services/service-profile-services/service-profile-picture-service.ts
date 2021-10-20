@@ -1,19 +1,19 @@
-import { IProfilePictureDto } from '../../entities/dtos/profile-dtos';
+import { IServiceProfilePictureDto } from '../../entities/dtos/service-profile-dtos';
 import { InvalidRequestError } from '../../errors';
-import { IProfilePictureRepository } from '../../repositories/interfaces/profile/profile-picture-repository';
+import { IServiceProfilePictureRepository } from '../../repositories/interfaces/service-profile/service-profile-picture-repository';
 import { PictureValidator } from '../../validators';
 import { BaseChildService } from '../base-child-service';
 
-interface IProfilePictureData extends IProfilePictureDto {
+interface IServiceProfilePictureData extends IServiceProfilePictureDto {
   profileId: string;
 }
 
-export class ProfilePictureService extends BaseChildService {
-  constructor(private readonly repository: IProfilePictureRepository) {
-    super(repository, new InvalidRequestError('ProfilePictureNotFound'));
+export class ServiceProfilePictureService extends BaseChildService {
+  constructor(private readonly repository: IServiceProfilePictureRepository) {
+    super(repository, new InvalidRequestError('ServiceProfilePictureNotFound'));
   }
 
-  async createAsync(data: IProfilePictureData): Promise<string> {
+  async createAsync(data: IServiceProfilePictureData): Promise<string> {
     const { picture, profileId } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
@@ -26,12 +26,12 @@ export class ProfilePictureService extends BaseChildService {
     return newId;
   }
 
-  async updateAsync(id: string, data: IProfilePictureData) {
-    const { profileId, picture } = data;
+  async updateAsync(id: string, data: IServiceProfilePictureData) {
+    const { picture, profileId } = data;
     const result = await this.repository.getByIdAndParentIdAsync(id, profileId);
     if (!result) throw this.notFoundError;
     await this.repository.updateAsync(id, {
-      picture: this.getValidatedPicture(picture),
+      picture: picture ? this.getValidatedPicture(picture) : result.picture,
       updatedAt: this.getCurrentDate(),
     });
   }

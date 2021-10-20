@@ -87,17 +87,13 @@ export class ProfileRatingRepositoryPostgresql
 
   async checkExistenceAsync(id: string): Promise<boolean> {
     const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
-    const { rows } = await this.connection.query<IProfileRatingDto>(query, [
-      id,
-    ]);
+    const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
     const query = `SELECT profile_id FROM ${this.tableName} WHERE profile_id = $1`;
-    const { rows } = await this.connection.query<IProfileRatingDto>(query, [
-      parentId,
-    ]);
+    const { rows } = await this.connection.query(query, [parentId]);
     return rows[0] ? true : false;
   }
 
@@ -106,10 +102,7 @@ export class ProfileRatingRepositoryPostgresql
     parentId: string
   ): Promise<boolean> {
     const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
-    const { rows } = await this.connection.query<IProfileRatingDto>(query, [
-      id,
-      parentId,
-    ]);
+    const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ? true : false;
   }
 }

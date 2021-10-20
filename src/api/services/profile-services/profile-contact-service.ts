@@ -33,36 +33,33 @@ export class ProfileContactService extends BaseChildService {
 
   async updateAsync(id: string, data: IProfileContactUpdateData) {
     const { profileId, contact, plataform } = data;
-    const profileContact = await this.repository.getByIdAndParentIdAsync(
-      id,
-      profileId
-    );
-    if (!profileContact) throw this.notFoundError;
+    const result = await this.repository.getByIdAndParentIdAsync(id, profileId);
+    if (!result) throw this.notFoundError;
     await this.repository.updateAsync(id, {
       plataform:
         plataform && plataform.length > 0
           ? this.getValidatedPlataform(plataform)
-          : profileContact.plataform,
+          : result.plataform,
       contact:
         contact && contact.length > 0
           ? this.getValidatedContact(contact)
-          : profileContact.contact,
+          : result.contact,
       updatedAt: this.getCurrentDate(),
     });
   }
 
-  async deleteAsync(id: string, profileId: string) {
-    await this.validateExistenceByIdAndParentIdAsync(id, profileId);
+  async deleteAsync(id: string, parentId: string) {
+    await this.validateExistenceByIdAndParentIdAsync(id, parentId);
     await this.repository.deleteAsync(id);
   }
 
-  private getValidatedPlataform(plataform: string) {
-    WordValidator.validate(plataform);
-    return plataform;
+  private getValidatedPlataform(value: string) {
+    WordValidator.validate(value);
+    return value;
   }
 
-  private getValidatedContact(contact: string) {
-    WordValidator.validate(contact);
-    return contact;
+  private getValidatedContact(value: string) {
+    WordValidator.validate(value);
+    return value;
   }
 }

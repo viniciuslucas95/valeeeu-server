@@ -44,7 +44,7 @@ describe('Account routes should', () => {
 
         test('because of wrong email format', async () => {
           const { status } = await updateAccountAsync(accountId, {
-            email: 'lili@hotmail..com',
+            email: 'lili@yahoo..com',
           });
           expect(status).toBe(400);
         });
