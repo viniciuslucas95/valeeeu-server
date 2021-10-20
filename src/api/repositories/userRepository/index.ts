@@ -1,1 +1,0 @@
-export { UserRepositoryPostgresql } from './UserRepositoryPostgresql';

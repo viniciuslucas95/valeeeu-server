@@ -1,3 +1,4 @@
-export { JwtConfig } from './JwtConfig';
-export { PostgresqlConfig } from './PostgresqlConfig';
-export { EnvironmentConfig } from './EnvironmentConfig';
+export { JwtConfig } from './jwt-config';
+export { PostgresqlConfig } from './postgresql-config';
+export { EnvironmentConfig } from './environment-config';
+export { PictureConfig } from './picture-config';

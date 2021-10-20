@@ -1,1 +1,0 @@
-export { ITagCreationDto } from './ITagCreationDto';

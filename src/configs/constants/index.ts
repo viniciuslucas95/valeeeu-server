@@ -1,1 +1,0 @@
-export { PathConstant } from './PathConstant';

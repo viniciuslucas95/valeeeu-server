@@ -1,1 +1,1 @@
-export { PoolProvider } from './PoolProvider';
+export { PoolProvider } from './pool-provider';

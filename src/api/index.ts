@@ -1,10 +1,10 @@
 import express from 'express';
-import { EnvironmentConfig } from '../configs';
-import { Routes } from './routes';
+import { EnvironmentConfig, PictureConfig } from '../configs';
+import { RouteHandler } from './routes';
 
 const server = express();
-server.use(express.json());
-Routes.setup(server);
+server.use(express.json({ limit: PictureConfig.maxSize }));
+RouteHandler.setup(server);
 server.listen(EnvironmentConfig.serverPort, () => {
   console.log('Server started...');
 });
