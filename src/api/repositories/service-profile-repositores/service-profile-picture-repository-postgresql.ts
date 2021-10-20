@@ -17,12 +17,12 @@ export class ServiceProfilePictureRepositoryPostgresql
   }
 
   async createAsync(data: ServiceProfilePicture): Promise<void> {
-    const { id, picture, profileId, createdAt, updatedAt } = data;
-    const query = `INSERT INTO ${this.tableName} (id, picture, profile_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5);`;
+    const { id, picture, serviceId, createdAt, updatedAt } = data;
+    const query = `INSERT INTO ${this.tableName} (id, picture, service_profile_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5);`;
     await this.connection.query(query, [
       id,
       picture,
-      profileId,
+      serviceId,
       createdAt,
       updatedAt,
     ]);
@@ -52,7 +52,7 @@ export class ServiceProfilePictureRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<IServiceProfilePictureDto | undefined> {
-    const query = `SELECT picture FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
+    const query = `SELECT picture FROM ${this.tableName} WHERE id = $1 AND service_profile_id = $2`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ?? undefined;
   }
@@ -78,7 +78,7 @@ export class ServiceProfilePictureRepositoryPostgresql
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE profile_id = $1`;
+    const query = `SELECT id FROM ${this.tableName} WHERE service_profile_id = $1`;
     const { rows } = await this.connection.query(query, [parentId]);
     return rows[0] ? true : false;
   }
@@ -87,7 +87,7 @@ export class ServiceProfilePictureRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND service_profile_id = $2`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ? true : false;
   }

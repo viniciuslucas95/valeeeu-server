@@ -2,5 +2,5 @@ import { BaseModel } from '../base-model';
 
 export class ServiceProfileTag extends BaseModel {
   tag!: string;
-  readonly profileId!: string;
+  readonly serviceId!: string;
 }

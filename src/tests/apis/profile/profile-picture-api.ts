@@ -2,13 +2,6 @@ import axios from 'axios';
 import { IProfilePictureDto } from '../../../api/entities/dtos/profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
 import { axiosConfig } from '../../axios-config';
-import { generateRandomComment } from './profile-rating-api';
-
-export function generateRandomPicture(): IProfilePictureDto {
-  return {
-    picture: generateRandomComment(),
-  };
-}
 
 export async function createProfilePictureAsync(
   accountId: string,

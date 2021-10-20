@@ -14,12 +14,12 @@ export class ServiceProfilePictureService extends BaseChildService {
   }
 
   async createAsync(data: IServiceProfilePictureData): Promise<string> {
-    const { picture, serviceId: profileId } = data;
+    const { picture, serviceId } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
       id: newId,
       picture: this.getValidatedPicture(picture),
-      profileId,
+      serviceId,
       createdAt: currentDate,
       updatedAt: currentDate,
     });

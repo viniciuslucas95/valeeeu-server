@@ -29,7 +29,7 @@ export class ServiceProfileTagController {
       const serviceProfileTagService = ServiceProfileTagServiceFactory.create();
       const id = await serviceProfileTagService.createAsync({
         tag,
-        serviceId: profileId,
+        serviceId,
       });
       res.status(201).json({ id });
     } catch (err) {
@@ -128,7 +128,7 @@ export class ServiceProfileTagController {
 
   private static getData(req: Request): IServiceProfileTagDto {
     return {
-      tag: req.body.item?.toString() ?? undefined,
+      tag: req.body.tag?.toString() ?? undefined,
     };
   }
 

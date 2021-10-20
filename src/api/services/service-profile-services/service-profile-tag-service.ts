@@ -19,7 +19,7 @@ export class ServiceProfileTagService extends BaseChildService {
     await this.repository.createAsync({
       id: newId,
       tag: this.getValidatedTag(tag),
-      profileId,
+      serviceId: profileId,
       createdAt: currentDate,
       updatedAt: currentDate,
     });

@@ -32,7 +32,7 @@ export class ServiceProfileItemController {
       const id = await serviceProfileItemService.createAsync({
         item,
         price,
-        serviceId: profileId,
+        serviceId,
       });
       res.status(201).json({ id });
     } catch (err) {

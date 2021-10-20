@@ -30,7 +30,7 @@ export class ServiceProfilePictureController {
         ServiceProfilePictureServiceFactory.create();
       const id = await serviceProfilePictureService.createAsync({
         picture,
-        serviceId: profileId,
+        serviceId,
       });
       res.status(201).json({ id });
     } catch (err) {

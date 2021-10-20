@@ -14,13 +14,13 @@ export class ServiceProfileItemService extends BaseChildService {
   }
 
   async createAsync(data: IServiceProfileItemData): Promise<string> {
-    const { item, price, serviceId: profileId } = data;
+    const { item, price, serviceId } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
       id: newId,
       item: this.getValidatedItem(item),
       price: this.getValidatedPrice(price),
-      profileId,
+      serviceId,
       createdAt: currentDate,
       updatedAt: currentDate,
     });
