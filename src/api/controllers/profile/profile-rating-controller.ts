@@ -83,8 +83,8 @@ export class ProfileRatingController {
         ratingId,
         profileId
       );
-      const profileRating = profileRatingService.getAsync(ratingId);
-      res.status(200).json(profileRating);
+      const result = profileRatingService.getAsync(ratingId);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
@@ -92,9 +92,12 @@ export class ProfileRatingController {
 
   static async getAllAsync(req: Request, res: Response, next: NextFunction) {
     try {
+      const { profileId } = ProfileRatingController.getIds(req);
       const profileRatingService = ProfileRatingServiceFactory.create();
-      const profileRatings = await profileRatingService.getAllAsync();
-      res.status(200).json(profileRatings);
+      const results = await profileRatingService.getAllByParentIdAsync(
+        profileId
+      );
+      res.status(200).json(results);
     } catch (err) {
       next(err);
     }

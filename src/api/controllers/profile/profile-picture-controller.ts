@@ -12,7 +12,7 @@ export class ProfilePictureController {
     try {
       // Verify access token
       const { accountId, profileId } = ProfilePictureController.getIds(req);
-      const { picture } = ProfilePictureController.getPictureData(req);
+      const { picture } = ProfilePictureController.getData(req);
       if (!picture) throw new InvalidRequestError('NullPicture');
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
@@ -35,7 +35,7 @@ export class ProfilePictureController {
       // Verify access token
       const { accountId, profileId, pictureId } =
         ProfilePictureController.getIds(req);
-      const { picture } = ProfilePictureController.getPictureData(req);
+      const { picture } = ProfilePictureController.getData(req);
       if (!picture) throw new InvalidRequestError('NullChangesSent');
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
@@ -79,8 +79,8 @@ export class ProfilePictureController {
         pictureId,
         profileId
       );
-      const profilePicture = profilePictureService.getAsync(pictureId);
-      res.status(200).json(profilePicture);
+      const result = profilePictureService.getAsync(pictureId);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
@@ -88,15 +88,18 @@ export class ProfilePictureController {
 
   static async getAllAsync(req: Request, res: Response, next: NextFunction) {
     try {
+      const { profileId } = ProfilePictureController.getIds(req);
       const profilePictureService = ProfilePictureServiceFactory.create();
-      const profilePictures = await profilePictureService.getAllAsync();
-      res.status(200).json(profilePictures);
+      const results = await profilePictureService.getAllByParentIdAsync(
+        profileId
+      );
+      res.status(200).json(results);
     } catch (err) {
       next(err);
     }
   }
 
-  private static getPictureData(req: Request): IProfilePictureDto {
+  private static getData(req: Request): IProfilePictureDto {
     const picture = req.body.picture?.toString() ?? '';
     return { picture };
   }

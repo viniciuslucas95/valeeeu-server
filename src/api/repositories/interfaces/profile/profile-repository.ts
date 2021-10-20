@@ -20,4 +20,4 @@ export interface IWriteProfileRepository
 
 export interface IReadProfileRepository
   extends IReadRepository<IProfileDto, IProfileMultipleResultsDto>,
-    IReadParentRepository<IProfileDto> {}
+    IReadParentRepository<IProfileDto, IProfileMultipleResultsDto> {}

@@ -28,4 +28,7 @@ export interface IProfileRatingReadRepository
       IIProfileRatingSingleResultDto,
       IIProfileRatingMultipleResultsDto
     >,
-    IReadParentRepository<IIProfileRatingSingleResultDto> {}
+    IReadParentRepository<
+      IIProfileRatingSingleResultDto,
+      IIProfileRatingMultipleResultsDto
+    > {}

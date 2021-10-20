@@ -85,6 +85,14 @@ export class ProfileRatingRepositoryPostgresql
     });
   }
 
+  async getAllByParentIdAsync(
+    parentId: string
+  ): Promise<IIProfileRatingMultipleResultsDto[]> {
+    const query = `SELECT id, rating, comment, updated_at FROM ${this.tableName} WHERE profile_id = $1;`;
+    const { rows } = await this.connection.query(query, [parentId]);
+    return rows;
+  }
+
   async checkExistenceAsync(id: string): Promise<boolean> {
     const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
     const { rows } = await this.connection.query(query, [id]);

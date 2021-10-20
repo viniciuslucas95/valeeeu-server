@@ -20,7 +20,10 @@ export interface IReadServiceProfileItemRepository
       IServiceProfileItemDto,
       IServiceProfileItemMultipleResultsDto
     >,
-    IReadParentRepository<IServiceProfileItemDto> {}
+    IReadParentRepository<
+      IServiceProfileItemDto,
+      IServiceProfileItemMultipleResultsDto
+    > {}
 
 export interface IWriteServiceProfileItemRepository
   extends IWriteRepository<ServiceProfileItem, IServiceProfileItemUpdateDto> {}

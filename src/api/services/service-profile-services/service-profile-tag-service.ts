@@ -5,7 +5,7 @@ import { WordValidator } from '../../validators';
 import { BaseChildService } from '../base-child-service';
 
 interface IServiceProfileTagData extends IServiceProfileTagDto {
-  profileId: string;
+  serviceId: string;
 }
 
 export class ServiceProfileTagService extends BaseChildService {
@@ -14,7 +14,7 @@ export class ServiceProfileTagService extends BaseChildService {
   }
 
   async createAsync(data: IServiceProfileTagData): Promise<string> {
-    const { tag, profileId } = data;
+    const { tag, serviceId: profileId } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
       id: newId,
@@ -27,7 +27,7 @@ export class ServiceProfileTagService extends BaseChildService {
   }
 
   async updateAsync(id: string, data: IServiceProfileTagData) {
-    const { tag, profileId } = data;
+    const { tag, serviceId: profileId } = data;
     const result = await this.repository.getByIdAndParentIdAsync(id, profileId);
     if (!result) throw this.notFoundError;
     await this.repository.updateAsync(id, {

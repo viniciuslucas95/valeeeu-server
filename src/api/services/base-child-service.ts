@@ -25,4 +25,21 @@ export abstract class BaseChildService extends BaseService {
     )
       throw error;
   }
+
+  async getByIdAndParentIdAsync(id: string, parentId: string) {
+    const result = await this.baseChildRepository.getByIdAndParentIdAsync(
+      id,
+      parentId
+    );
+    if (!result) throw this.notFoundError;
+    return result;
+  }
+
+  async getAllByParentIdAsync(parentId: string) {
+    const result = await this.baseChildRepository.getAllByParentIdAsync(
+      parentId
+    );
+    if (!result) throw this.notFoundError;
+    return result;
+  }
 }

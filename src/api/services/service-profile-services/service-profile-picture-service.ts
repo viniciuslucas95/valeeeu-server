@@ -5,7 +5,7 @@ import { PictureValidator } from '../../validators';
 import { BaseChildService } from '../base-child-service';
 
 interface IServiceProfilePictureData extends IServiceProfilePictureDto {
-  profileId: string;
+  serviceId: string;
 }
 
 export class ServiceProfilePictureService extends BaseChildService {
@@ -14,7 +14,7 @@ export class ServiceProfilePictureService extends BaseChildService {
   }
 
   async createAsync(data: IServiceProfilePictureData): Promise<string> {
-    const { picture, profileId } = data;
+    const { picture, serviceId: profileId } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
       id: newId,
@@ -27,7 +27,7 @@ export class ServiceProfilePictureService extends BaseChildService {
   }
 
   async updateAsync(id: string, data: IServiceProfilePictureData) {
-    const { picture, profileId } = data;
+    const { picture, serviceId: profileId } = data;
     const result = await this.repository.getByIdAndParentIdAsync(id, profileId);
     if (!result) throw this.notFoundError;
     await this.repository.updateAsync(id, {

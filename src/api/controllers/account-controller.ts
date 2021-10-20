@@ -8,7 +8,7 @@ export class AccountController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
       const service = AccountServiceFactory.create();
-      const { email, password } = AccountController.getCredentials(req);
+      const { email, password } = AccountController.getData(req);
       if (!email) throw new InvalidRequestError('NullEmail');
       if (!password) throw new InvalidRequestError('NullPassword');
       const id = await service.createAsync({
@@ -25,7 +25,7 @@ export class AccountController {
     try {
       // Verify access token
       const { accountId } = RequestParamsHandler.getAccountId(req);
-      const { email, password } = AccountController.getCredentials(req);
+      const { email, password } = AccountController.getData(req);
       const service = AccountServiceFactory.create();
       if (!email && !password) throw new InvalidRequestError('NoChangesSent');
       await service.updateAsync(accountId, { email, password });
@@ -52,14 +52,14 @@ export class AccountController {
       // Verify access token
       const { accountId } = RequestParamsHandler.getAccountId(req);
       const service = AccountServiceFactory.create();
-      const account = await service.getAsync(accountId);
-      res.status(200).json(account);
+      const result = await service.getAsync(accountId);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
   }
 
-  private static getCredentials(req: Request): Partial<IAccountDto> {
+  private static getData(req: Request): Partial<IAccountDto> {
     const email = req.body.email?.toString() ?? undefined;
     const password = req.body.password?.toString() ?? undefined;
     return { email, password };

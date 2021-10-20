@@ -21,7 +21,10 @@ export interface IReadServiceProfilePictureRepository
       IServiceProfilePictureDto,
       IServiceProfilePictureMultipleResultsDto
     >,
-    IReadParentRepository<IServiceProfilePictureDto> {}
+    IReadParentRepository<
+      IServiceProfilePictureDto,
+      IServiceProfilePictureMultipleResultsDto
+    > {}
 
 export interface IWriteServiceProfilePictureRepository
   extends IWriteRepository<

@@ -20,7 +20,10 @@ export interface IReadServiceProfileTagRepository
       IServiceProfileTagDto,
       IServiceProfileTagMultipleResultsDto
     >,
-    IReadParentRepository<IServiceProfileTagDto> {}
+    IReadParentRepository<
+      IServiceProfileTagDto,
+      IServiceProfileTagMultipleResultsDto
+    > {}
 
 export interface IWriteServiceProfileTagRepository
   extends IWriteRepository<ServiceProfileTag, IServiceProfileTagUpdateDto> {}

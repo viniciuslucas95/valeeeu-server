@@ -5,7 +5,7 @@ import { PriceValidator, WordValidator } from '../../validators';
 import { BaseChildService } from '../base-child-service';
 
 interface IServiceProfileItemData extends IServiceProfileItemDto {
-  profileId: string;
+  serviceId: string;
 }
 
 export class ServiceProfileItemService extends BaseChildService {
@@ -14,7 +14,7 @@ export class ServiceProfileItemService extends BaseChildService {
   }
 
   async createAsync(data: IServiceProfileItemData): Promise<string> {
-    const { item, price, profileId } = data;
+    const { item, price, serviceId: profileId } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
       id: newId,
@@ -28,7 +28,7 @@ export class ServiceProfileItemService extends BaseChildService {
   }
 
   async updateAsync(id: string, data: IServiceProfileItemData) {
-    const { price, item, profileId } = data;
+    const { price, item, serviceId: profileId } = data;
     const result = await this.repository.getByIdAndParentIdAsync(id, profileId);
     if (!result) throw this.notFoundError;
     await this.repository.updateAsync(id, {

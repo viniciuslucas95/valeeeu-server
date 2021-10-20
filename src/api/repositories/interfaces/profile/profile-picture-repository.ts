@@ -23,4 +23,7 @@ export interface IProfilePictureReadRepository
       IProfilePictureDto,
       IIProfilePictureMultipleResultsDto
     >,
-    IReadParentRepository<IProfilePictureDto> {}
+    IReadParentRepository<
+      IProfilePictureDto,
+      IIProfilePictureMultipleResultsDto
+    > {}

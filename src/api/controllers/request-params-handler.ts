@@ -20,4 +20,16 @@ export class RequestParamsHandler {
   static getPictureId(req: Request) {
     return { pictureId: req.params.pictureId };
   }
+
+  static getTagId(req: Request) {
+    return { tagId: req.params.tagId };
+  }
+
+  static getItemId(req: Request) {
+    return { itemId: req.params.itemId };
+  }
+
+  static getServiceId(req: Request) {
+    return { serviceId: req.params.serviceId };
+  }
 }

@@ -12,8 +12,7 @@ export class ProfileContactController {
     try {
       // Verify access token
       const { accountId, profileId } = ProfileContactController.getIds(req);
-      const { plataform, contact } =
-        ProfileContactController.getProfileContactData(req);
+      const { plataform, contact } = ProfileContactController.getData(req);
       if (!plataform) throw new InvalidRequestError('NullPlataform');
       if (!contact) throw new InvalidRequestError('NullContact');
       const profileService = ProfileServiceFactory.create();
@@ -38,8 +37,7 @@ export class ProfileContactController {
       // Verify access token
       const { accountId, profileId, contactId } =
         ProfileContactController.getIds(req);
-      const { plataform, contact } =
-        ProfileContactController.getProfileContactData(req);
+      const { plataform, contact } = ProfileContactController.getData(req);
       if (!plataform && !contact)
         throw new InvalidRequestError('NoChangesSent');
       const profileService = ProfileServiceFactory.create();
@@ -85,8 +83,8 @@ export class ProfileContactController {
         contactId,
         profileId
       );
-      const profileContact = profileContactService.getAsync(contactId);
-      res.status(200).json(profileContact);
+      const result = profileContactService.getAsync(contactId);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
@@ -94,15 +92,18 @@ export class ProfileContactController {
 
   static async getAllAsync(req: Request, res: Response, next: NextFunction) {
     try {
+      const { profileId } = ProfileContactController.getIds(req);
       const profileContactService = ProfileContactServiceFactory.create();
-      const profileContacts = await profileContactService.getAllAsync();
-      res.status(200).json(profileContacts);
+      const results = await profileContactService.getAllByParentIdAsync(
+        profileId
+      );
+      res.status(200).json(results);
     } catch (err) {
       next(err);
     }
   }
 
-  private static getProfileContactData(req: Request): IProfileContactDto {
+  private static getData(req: Request): IProfileContactDto {
     return {
       plataform: req.body.plataform?.toString() ?? undefined,
       contact: req.body.contact?.toString() ?? undefined,

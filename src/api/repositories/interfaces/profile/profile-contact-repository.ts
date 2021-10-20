@@ -23,4 +23,7 @@ export interface IProfileContactReadRepository
       IProfileContactDto,
       IIProfileContactMultipleResultsDto
     >,
-    IReadParentRepository<IProfileContactDto> {}
+    IReadParentRepository<
+      IProfileContactDto,
+      IIProfileContactMultipleResultsDto
+    > {}

@@ -10,7 +10,7 @@ export class ProfileController {
     try {
       // Verify access token
       const { accountId } = ProfileController.getIds(req);
-      const { name } = ProfileController.getProfileData(req);
+      const { name } = ProfileController.getData(req);
       if (!name) throw new InvalidRequestError('NullName');
       const accountService = AccountServiceFactory.create();
       await accountService.validateExistenceAsync(accountId);
@@ -30,7 +30,7 @@ export class ProfileController {
     try {
       // Verify access token
       const { accountId, profileId } = ProfileController.getIds(req);
-      const { name } = ProfileController.getProfileData(req);
+      const { name } = ProfileController.getData(req);
       if (!name) throw new InvalidRequestError('NullName');
       const profileService = ProfileServiceFactory.create();
       await profileService.updateAsync(profileId, { name, accountId });
@@ -56,8 +56,8 @@ export class ProfileController {
     try {
       const { profileId } = ProfileController.getIds(req);
       const profileService = ProfileServiceFactory.create();
-      const profile = await profileService.getAsync(profileId);
-      res.status(200).json(profile);
+      const result = await profileService.getAsync(profileId);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
@@ -66,14 +66,14 @@ export class ProfileController {
   static async getAllAsync(req: Request, res: Response, next: NextFunction) {
     try {
       const profileService = ProfileServiceFactory.create();
-      const profiles = await profileService.getAllAsync();
-      res.status(200).json(profiles);
+      const results = await profileService.getAllAsync();
+      res.status(200).json(results);
     } catch (err) {
       next(err);
     }
   }
 
-  private static getProfileData(req: Request): IProfileDto {
+  private static getData(req: Request): IProfileDto {
     return { name: req.body.name?.toString() ?? undefined };
   }
 
