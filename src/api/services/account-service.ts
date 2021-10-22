@@ -49,7 +49,9 @@ export class AccountService extends BaseService {
 
   async getValidatedAccountAsync(data: IAccountDto) {
     const { email, password } = data;
-    const result = await this.repository.getByEmailAsync(email);
+    const result = await this.repository.getByEmailAsync(
+      this.getFormatedEmail(email)
+    );
     if (!result) throw this.notFoundError;
     if (!(await BcryptHandler.compareDataAsync(password, result.password)))
       throw new UnauthorizedError('WrongCredentials');
@@ -58,7 +60,7 @@ export class AccountService extends BaseService {
 
   private async getValidatedAndFormatedEmailAsync(value: string) {
     EmailValidator.validate(value);
-    const formatedEmail = value.toLocaleLowerCase();
+    const formatedEmail = this.getFormatedEmail(value);
     if (await this.repository.checkExistenceByEmailAsync(formatedEmail))
       throw new ConflictError('EmailAlreadyExists');
     return formatedEmail;
@@ -67,5 +69,9 @@ export class AccountService extends BaseService {
   private async getValidatedAndHashedPasswordAsync(value: string) {
     PasswordValidator.validate(value);
     return await BcryptHandler.hashDataAsync(value);
+  }
+
+  private getFormatedEmail(email: string) {
+    return email.toLocaleLowerCase();
   }
 }
