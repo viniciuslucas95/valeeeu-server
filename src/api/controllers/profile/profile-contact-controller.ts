@@ -4,7 +4,7 @@ import { InvalidRequestError } from '../../errors';
 import {
   ProfileContactServiceFactory,
   ProfileServiceFactory,
-} from '../../factories/profile-factories';
+} from '../../factories/profile-service-factories';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ProfileContactController {

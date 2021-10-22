@@ -3,6 +3,7 @@ import { IAccountDto } from '../entities/dtos';
 import { Account } from '../entities/models';
 import { BaseRepositoryPostgresql } from './base-repository-postgresql';
 import {
+  IAccountReadByEmailDto,
   IAccountRepository,
   IAccountUpdateDto,
 } from './interfaces/account-repository';
@@ -33,11 +34,6 @@ export class AccountRepositoryPostgresql
     await this.connection.query(query, [email, password, updatedAt, id]);
   }
 
-  async deleteAsync(id: string) {
-    const query = `DELETE FROM ${this.tableName} WHERE id = $1;`;
-    await this.connection.query(query, [id]);
-  }
-
   async getAsync(
     id: string
   ): Promise<Omit<IAccountDto, 'password'> | undefined> {
@@ -52,20 +48,17 @@ export class AccountRepositoryPostgresql
     return rows[0] ?? undefined;
   }
 
-  async getByEmailAsync(email: string): Promise<IAccountDto | undefined> {
-    const query = `SELECT email, password FROM ${this.tableName} WHERE email = $1 LIMIT 1;`;
+  async getByEmailAsync(
+    email: string
+  ): Promise<IAccountReadByEmailDto | undefined> {
+    const query = `SELECT id, email, password FROM ${this.tableName} WHERE email = $1 LIMIT 1;`;
     const { rows } = await this.connection.query(query, [email]);
     return rows[0] ?? undefined;
   }
 
   async getAllAsync(): Promise<unknown[]> {
+    console.warn('Trying to get all accounts');
     return [];
-  }
-
-  async checkExistenceAsync(id: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 LIMIT 1;`;
-    const { rows } = await this.connection.query(query, [id]);
-    return rows[0] ? true : false;
   }
 
   async checkExistenceByEmailAsync(email: string) {

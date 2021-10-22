@@ -34,11 +34,6 @@ export class ServiceProfileRepositoryPostgresql
     await this.connection.query(query, [description, updatedAt, id]);
   }
 
-  async deleteAsync(id: string): Promise<void> {
-    const query = `DELETE FROM ${this.tableName} WHERE id = $1;`;
-    await this.connection.query(query, [id]);
-  }
-
   async getAsync(id: string): Promise<IServiceProfileDto | undefined> {
     const query = `SELECT description FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
@@ -76,12 +71,6 @@ export class ServiceProfileRepositoryPostgresql
         profileId: row.profile_id,
       };
     });
-  }
-
-  async checkExistenceAsync(id: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
-    const { rows } = await this.connection.query(query, [id]);
-    return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {

@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { InvalidRequestError, ServerError } from '../errors';
 import { AccountServiceFactory } from '../factories';
+import {
+  AccessTokenServiceFactory,
+  RefreshTokenServiceFactory,
+} from '../factories/token-service-factories';
 import { PostgresqlTransactionHandler } from '../helpers';
 import { PoolProvider } from '../providers';
 import { JwtService } from '../services';
@@ -8,8 +12,8 @@ import { JwtService } from '../services';
 export class AuthController {
   static async getTokensAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      const email = req.body.email;
-      const password = req.body.password;
+      const email = req.query.email;
+      const password = req.query.password;
       if (!email) throw new InvalidRequestError('NullEmail');
       if (typeof email !== 'string')
         throw new InvalidRequestError('EmailMustBeAString');
@@ -17,8 +21,7 @@ export class AuthController {
       if (typeof password !== 'string')
         throw new InvalidRequestError('PasswordMustBeAString');
       const accountService = AccountServiceFactory.create();
-      // add
-      const accountId = await accountService.validateCredentialsAsync({
+      const accountId = await accountService.getValidatedAccountAsync({
         email,
         password,
       });
@@ -26,7 +29,6 @@ export class AuthController {
       const refreshToken = jwtService.createRefreshToken({ accountId });
       const tokenCreationError = new ServerError('TokenCreationError');
       const refreshTokenService = RefreshTokenServiceFactory.create();
-      // add
       if (await refreshTokenService.checkExistenceByTokenAsync(refreshToken))
         throw tokenCreationError;
       const accessToken = jwtService.createAccessToken({ accountId });
@@ -37,7 +39,6 @@ export class AuthController {
       await PostgresqlTransactionHandler.startTransactionAsync(
         client,
         async () => {
-          // add
           const forbiddenRefreshTokenIds =
             await refreshTokenService.forbidAllTokensAsync(accountId);
           for (let i = 0; i < forbiddenRefreshTokenIds.length; i++) {
@@ -45,15 +46,14 @@ export class AuthController {
               forbiddenRefreshTokenIds[i]
             );
           }
-          // add
           const refreshTokenId = await refreshTokenService.createAsync({
-            refreshToken,
-            accountId,
+            token: refreshToken,
+            parentId: accountId,
           });
-          // test an error in between
+          // TEST AN ERROR
           await accessTokenService.createAsync({
-            accessToken,
-            refreshTokenId,
+            token: accessToken,
+            parentId: refreshTokenId,
           });
         }
       );
@@ -69,14 +69,14 @@ export class AuthController {
     next: NextFunction
   ) {
     try {
-      const refreshToken = req.params['refresh-token'];
+      const refreshToken = req.params['refreshToken'];
       if (!refreshToken) throw new InvalidRequestError('NullRefreshToken');
       if (typeof refreshToken !== 'string')
         throw new InvalidRequestError('RefreshTokenMustBeAString');
       const jwtService = new JwtService();
       const { accountId } = jwtService.verifyRefreshToken(refreshToken);
       const refreshTokenService = RefreshTokenServiceFactory.create();
-      const refreshTokenId = await refreshTokenService.getValidatedTokenIdAsync(
+      const refreshTokenId = await refreshTokenService.getValidatedTokenAsync(
         refreshToken
       );
       const accessToken = jwtService.createAccessToken({ accountId });
@@ -88,8 +88,8 @@ export class AuthController {
         async () => {
           await accessTokenService.forbidAllTokensAsync(refreshTokenId);
           await accessTokenService.createAsync({
-            accessToken,
-            refreshTokenId,
+            token: accessToken,
+            parentId: refreshTokenId,
           });
         }
       );
@@ -105,7 +105,7 @@ export class AuthController {
     next: NextFunction
   ) {
     try {
-      const accessToken = req.params['access-token'];
+      const accessToken = req.params['accessToken'];
       if (!accessToken) throw new InvalidRequestError('NullAccessToken');
       if (typeof accessToken !== 'string')
         throw new InvalidRequestError('AccessTokenMustBeAString');
@@ -114,7 +114,7 @@ export class AuthController {
       const accountService = AccountServiceFactory.create();
       await accountService.validateExistenceAsync(accountId);
       const accessTokenService = AccessTokenServiceFactory.create();
-      await accessTokenService.validateTokenAsync(accessToken);
+      await accessTokenService.getValidatedTokenAsync(accessToken);
       res.sendStatus(200);
     } catch (err) {
       next(err);

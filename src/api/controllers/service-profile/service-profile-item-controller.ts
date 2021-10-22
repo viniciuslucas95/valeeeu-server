@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { IServiceProfileItemDto } from '../../entities/dtos/service-profile-dtos';
 import { InvalidRequestError } from '../../errors';
-import { ProfileServiceFactory } from '../../factories/profile-factories';
+import { ProfileServiceFactory } from '../../factories/profile-service-factories';
 import {
   ServiceProfileItemServiceFactory,
   ServiceProfileServiceFactory,
-} from '../../factories/service-profile-factories';
+} from '../../factories/service-profile-service-factories';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ServiceProfileItemController {

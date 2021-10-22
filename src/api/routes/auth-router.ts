@@ -4,15 +4,15 @@ import { AuthController } from '../controllers';
 export class AuthRouter {
   static create() {
     const router = Router();
-    router.get('/auth', AuthController.getTokensAsync);
     router.get(
-      '/auth/refresh/:refresh-token',
+      '/auth/refresh/:refreshToken',
       AuthController.getNewAccessTokenAsync
     );
     router.get(
-      '/auth/verify/:access-token',
+      '/auth/verify/:accessToken',
       AuthController.verifyAccessTokenAsync
     );
+    router.get('/auth', AuthController.getTokensAsync);
     return router;
   }
 }

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IProfileDto } from '../../entities/dtos/profile-dtos';
 import { InvalidRequestError } from '../../errors';
 import { AccountServiceFactory } from '../../factories';
-import { ProfileServiceFactory } from '../../factories/profile-factories';
+import { ProfileServiceFactory } from '../../factories/profile-service-factories';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ProfileController {

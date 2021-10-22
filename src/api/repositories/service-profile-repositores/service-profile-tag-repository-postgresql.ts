@@ -37,11 +37,6 @@ export class ServiceProfileTagRepositoryPostgresql
     await this.connection.query(query, [tag, updatedAt, id]);
   }
 
-  async deleteAsync(id: string): Promise<void> {
-    const query = `DELETE FROM ${this.tableName} WHERE id = $1;`;
-    await this.connection.query(query, [id]);
-  }
-
   async getAsync(id: string): Promise<IServiceProfileTagDto | undefined> {
     const query = `SELECT tag FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
@@ -69,12 +64,6 @@ export class ServiceProfileTagRepositoryPostgresql
     const query = `SELECT id, tag FROM ${this.tableName} WHERE service_profile_id = $1;`;
     const { rows } = await this.connection.query(query, [parentId]);
     return rows;
-  }
-
-  async checkExistenceAsync(id: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
-    const { rows } = await this.connection.query(query, [id]);
-    return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {

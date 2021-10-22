@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { IServiceProfileDto } from '../../entities/dtos/service-profile-dtos';
 import { InvalidRequestError } from '../../errors';
-import { ProfileServiceFactory } from '../../factories/profile-factories';
-import { ServiceProfileServiceFactory } from '../../factories/service-profile-factories';
+import { ProfileServiceFactory } from '../../factories/profile-service-factories';
+import { ServiceProfileServiceFactory } from '../../factories/service-profile-service-factories';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ServiceProfileController {

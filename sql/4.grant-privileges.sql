@@ -1,5 +1,8 @@
 GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.account TO test;
 
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.refresh_token TO test;
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.access_token TO test;
+
 GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.profile TO test;
 GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.profile_contact TO test;
 GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.profile_rating TO test;

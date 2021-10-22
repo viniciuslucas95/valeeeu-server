@@ -3,9 +3,11 @@ import { Account } from '../../entities/models';
 import { IAccountDto } from '../../entities/dtos';
 
 export interface IAccountUpdateDto extends IAccountDto {
-  email: string;
-  password: string;
   updatedAt: Date;
+}
+
+export interface IAccountReadByEmailDto extends IAccountDto {
+  id: string;
 }
 
 export interface IAccountRepository
@@ -15,7 +17,7 @@ export interface IAccountRepository
 export interface IReadAccountRepository
   extends IReadRepository<Omit<IAccountDto, 'password'>, unknown> {
   getPrivilegedAsync(id: string): Promise<IAccountDto | undefined>;
-  getByEmailAsync(email: string): Promise<IAccountDto | undefined>;
+  getByEmailAsync(email: string): Promise<IAccountReadByEmailDto | undefined>;
   checkExistenceByEmailAsync(email: string): Promise<boolean>;
 }
 

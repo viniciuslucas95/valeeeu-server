@@ -28,7 +28,7 @@ export class RouteHandler {
     server.use('/', ProfilePictureRouter.create(), handleError);
     server.use('/', ProfileRouter.create(), handleError);
 
-    server.use('/', AccountRouter.create(), handleError);
     server.use('/', AuthRouter.create(), handleError);
+    server.use('/', AccountRouter.create(), handleError);
   }
 }

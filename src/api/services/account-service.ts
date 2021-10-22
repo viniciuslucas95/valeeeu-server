@@ -47,12 +47,13 @@ export class AccountService extends BaseService {
     await this.repository.deleteAsync(id);
   }
 
-  async validateCredentialsAsync(data: IAccountDto) {
+  async getValidatedAccountAsync(data: IAccountDto) {
     const { email, password } = data;
     const result = await this.repository.getByEmailAsync(email);
     if (!result) throw this.notFoundError;
     if (!(await BcryptHandler.compareDataAsync(password, result.password)))
       throw new UnauthorizedError('WrongCredentials');
+    return result.id;
   }
 
   private async getValidatedAndFormatedEmailAsync(value: string) {

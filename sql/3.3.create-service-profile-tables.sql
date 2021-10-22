@@ -6,7 +6,8 @@ CREATE TABLE service_profile(
 	CONSTRAINT pk_service_profile
 		PRIMARY KEY(id),
 	description VARCHAR
-		NOT NULL,
+		NOT NULL
+		DEFAULT '',
 	profile_id VARCHAR(32)
 		NOT NULL,
 	CONSTRAINT fk_service_profile_profile
