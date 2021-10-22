@@ -51,7 +51,7 @@ export class AccountRepositoryPostgresql
   async getByEmailAsync(
     email: string
   ): Promise<IAccountReadByEmailDto | undefined> {
-    const query = `SELECT id, email, password FROM ${this.tableName} WHERE email = $1 LIMIT 1;`;
+    const query = `SELECT id, password FROM ${this.tableName} WHERE email = $1 LIMIT 1;`;
     const { rows } = await this.connection.query(query, [email]);
     return rows[0] ?? undefined;
   }

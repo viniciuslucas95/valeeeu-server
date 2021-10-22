@@ -6,7 +6,8 @@ export interface IAccountUpdateDto extends IAccountDto {
   updatedAt: Date;
 }
 
-export interface IAccountReadByEmailDto extends IAccountDto {
+export interface IAccountReadByEmailDto {
+  password: string;
   id: string;
 }
 

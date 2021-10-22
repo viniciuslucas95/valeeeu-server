@@ -1,7 +1,7 @@
 import { PoolClient } from 'pg';
 
 export class PostgresqlTransactionHandler {
-  static async startTransactionAsync(client: PoolClient, action: Function) {
+  static async executeTransactionAsync(client: PoolClient, action: Function) {
     try {
       await client.query('BEGIN');
       await action();

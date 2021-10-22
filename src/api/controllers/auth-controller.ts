@@ -28,15 +28,15 @@ export class AuthController {
       const jwtService = new JwtService();
       const refreshToken = jwtService.createRefreshToken({ accountId });
       const tokenCreationError = new ServerError('TokenCreationError');
-      const refreshTokenService = RefreshTokenServiceFactory.create();
+      const client = await PoolProvider.pool.connect();
+      const refreshTokenService = RefreshTokenServiceFactory.create(client);
       if (await refreshTokenService.checkExistenceByTokenAsync(refreshToken))
         throw tokenCreationError;
       const accessToken = jwtService.createAccessToken({ accountId });
-      const accessTokenService = AccessTokenServiceFactory.create();
+      const accessTokenService = AccessTokenServiceFactory.create(client);
       if (await accessTokenService.checkExistenceByTokenAsync(accessToken))
         throw tokenCreationError;
-      const client = await PoolProvider.pool.connect();
-      await PostgresqlTransactionHandler.startTransactionAsync(
+      await PostgresqlTransactionHandler.executeTransactionAsync(
         client,
         async () => {
           const forbiddenRefreshTokenIds =
@@ -50,7 +50,6 @@ export class AuthController {
             token: refreshToken,
             parentId: accountId,
           });
-          // TEST AN ERROR
           await accessTokenService.createAsync({
             token: accessToken,
             parentId: refreshTokenId,
@@ -79,11 +78,11 @@ export class AuthController {
       const refreshTokenId = await refreshTokenService.getValidatedTokenAsync(
         refreshToken
       );
-      const accessToken = jwtService.createAccessToken({ accountId });
-      const accessTokenService = AccessTokenServiceFactory.create();
-      await accessTokenService.checkExistenceByTokenAsync(accessToken);
       const client = await PoolProvider.pool.connect();
-      await PostgresqlTransactionHandler.startTransactionAsync(
+      const accessToken = jwtService.createAccessToken({ accountId });
+      const accessTokenService = AccessTokenServiceFactory.create(client);
+      await accessTokenService.checkExistenceByTokenAsync(accessToken);
+      await PostgresqlTransactionHandler.executeTransactionAsync(
         client,
         async () => {
           await accessTokenService.forbidAllTokensAsync(refreshTokenId);
