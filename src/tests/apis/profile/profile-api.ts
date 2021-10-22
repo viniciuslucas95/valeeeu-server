@@ -37,6 +37,10 @@ export async function getProfileAsync(profileId: string) {
   return await axios.get(getShortUrl(profileId), axiosConfig);
 }
 
+export async function getAllProfilesFromAccountAsync(accountId: string) {
+  return await axios.get(getFullUrl(accountId), axiosConfig);
+}
+
 export async function getAllProfilesAsync() {
   return await axios.get(getShortUrl(), axiosConfig);
 }

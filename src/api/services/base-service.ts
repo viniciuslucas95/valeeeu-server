@@ -1,5 +1,5 @@
-import { randomUUID } from 'crypto';
 import { InvalidRequestError } from '../errors';
+import { DataHandler } from '../helpers';
 import { IReadRepository } from '../repositories/interfaces/base-repository';
 
 interface IBaseModelData {
@@ -23,8 +23,9 @@ export abstract class BaseService {
     return await this.baseRepository.getAllAsync();
   }
 
-  async validateExistenceAsync(id: string, error: Error = this.notFoundError) {
-    if (!(await this.baseRepository.checkExistenceAsync(id))) throw error;
+  async validateExistenceAsync(id: string) {
+    if (!(await this.baseRepository.checkExistenceAsync(id)))
+      throw this.notFoundError;
   }
 
   protected async generateNewBaseModelData(): Promise<IBaseModelData> {
@@ -38,7 +39,7 @@ export abstract class BaseService {
   }
 
   protected generateNewId() {
-    return randomUUID().replace(/[-]/gm, '');
+    return DataHandler.generateRandomId();
   }
 
   private async generateNewIdAsync() {

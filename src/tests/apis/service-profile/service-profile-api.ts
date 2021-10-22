@@ -47,6 +47,10 @@ export async function getServiceProfileAsync(
   return await axios.get(getShortUrlWithIds(profileId, serviceId), axiosConfig);
 }
 
+export async function getAllServiceProfilesFromProfileAsync(profileId: string) {
+  return await axios.get(getShortUrlWithoutIds(profileId), axiosConfig);
+}
+
 export async function getAllServiceProfilesAsync() {
   return await axios.get(getShortUrlWithoutIds(), axiosConfig);
 }
@@ -60,6 +64,7 @@ function getShortUrlWithIds(profileId: string, serviceId: string) {
   return `http://localhost:${EnvironmentConfig.serverPort}/profiles/${profileId}/services/${serviceId}`;
 }
 
-function getShortUrlWithoutIds() {
-  return `http://localhost:${EnvironmentConfig.serverPort}/profiles/services`;
+function getShortUrlWithoutIds(profileId?: string) {
+  const hasProfileIdId = profileId ? `${profileId}/` : '';
+  return `http://localhost:${EnvironmentConfig.serverPort}/profiles/${hasProfileIdId}services`;
 }

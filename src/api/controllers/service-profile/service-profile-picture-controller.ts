@@ -132,10 +132,11 @@ export class ServiceProfilePictureController {
     }
   }
 
-  private static getData(req: Request): IServiceProfilePictureDto {
-    return {
-      picture: req.body.picture?.toString() ?? undefined,
-    };
+  private static getData(req: Request): Partial<IServiceProfilePictureDto> {
+    const picture = req.body.picture;
+    if (picture && typeof picture !== 'string')
+      throw new InvalidRequestError('PictureMustBeAString');
+    return { picture };
   }
 
   private static getIds(req: Request) {

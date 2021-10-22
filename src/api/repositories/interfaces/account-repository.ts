@@ -15,6 +15,7 @@ export interface IAccountRepository
 export interface IReadAccountRepository
   extends IReadRepository<Omit<IAccountDto, 'password'>, unknown> {
   getPrivilegedAsync(id: string): Promise<IAccountDto | undefined>;
+  getByEmailAsync(email: string): Promise<IAccountDto | undefined>;
   checkExistenceByEmailAsync(email: string): Promise<boolean>;
 }
 

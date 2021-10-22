@@ -41,14 +41,20 @@ export class AccountRepositoryPostgresql
   async getAsync(
     id: string
   ): Promise<Omit<IAccountDto, 'password'> | undefined> {
-    const query = `SELECT email FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT email FROM ${this.tableName} WHERE id = $1 LIMIT 1;`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ?? undefined;
   }
 
   async getPrivilegedAsync(id: string): Promise<IAccountDto | undefined> {
-    const query = `SELECT email, password FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT email, password FROM ${this.tableName} WHERE id = $1 LIMIT 1;`;
     const { rows } = await this.connection.query(query, [id]);
+    return rows[0] ?? undefined;
+  }
+
+  async getByEmailAsync(email: string): Promise<IAccountDto | undefined> {
+    const query = `SELECT email, password FROM ${this.tableName} WHERE email = $1 LIMIT 1;`;
+    const { rows } = await this.connection.query(query, [email]);
     return rows[0] ?? undefined;
   }
 
@@ -57,13 +63,13 @@ export class AccountRepositoryPostgresql
   }
 
   async checkExistenceAsync(id: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1;`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 LIMIT 1;`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
   async checkExistenceByEmailAsync(email: string) {
-    const query = `SELECT email FROM ${this.tableName} WHERE email = $1;`;
+    const query = `SELECT email FROM ${this.tableName} WHERE email = $1 LIMIT 1;`;
     const { rows } = await this.connection.query(query, [email]);
     return rows[0] ? true : false;
   }

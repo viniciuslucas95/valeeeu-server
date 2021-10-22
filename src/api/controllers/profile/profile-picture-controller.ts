@@ -36,7 +36,7 @@ export class ProfilePictureController {
       const { accountId, profileId, pictureId } =
         ProfilePictureController.getIds(req);
       const { picture } = ProfilePictureController.getData(req);
-      if (!picture) throw new InvalidRequestError('NullChangesSent');
+      if (!picture) throw new InvalidRequestError('NoChangesSent');
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,
@@ -98,8 +98,10 @@ export class ProfilePictureController {
     }
   }
 
-  private static getData(req: Request): IProfilePictureDto {
-    const picture = req.body.picture?.toString() ?? '';
+  private static getData(req: Request): Partial<IProfilePictureDto> {
+    const picture = req.body.picture;
+    if (picture && typeof picture !== 'string')
+      throw new InvalidRequestError('PictureMustBeAString');
     return { picture };
   }
 

@@ -7,6 +7,6 @@ export class BcryptHandler {
   }
 
   static async compareDataAsync(data: string, hash: string) {
-    return compare(data, hash);
+    return await compare(data, hash);
   }
 }

@@ -40,7 +40,7 @@ export class ProfileRepositoryPostgresql
   }
 
   async getAsync(id: string): Promise<IProfileDto | undefined> {
-    const query = `SELECT name FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT name FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ?? undefined;
   }
@@ -49,7 +49,7 @@ export class ProfileRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<IProfileDto | undefined> {
-    const query = `SELECT name FROM ${this.tableName} WHERE id = $1 AND account_id = $2`;
+    const query = `SELECT name FROM ${this.tableName} WHERE id = $1 AND account_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ?? undefined;
   }
@@ -69,13 +69,13 @@ export class ProfileRepositoryPostgresql
   }
 
   async checkExistenceAsync(id: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE account_id = $1`;
+    const query = `SELECT id FROM ${this.tableName} WHERE account_id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [parentId]);
     return rows[0] ? true : false;
   }
@@ -84,7 +84,7 @@ export class ProfileRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND account_id = $2`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND account_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ? true : false;
   }

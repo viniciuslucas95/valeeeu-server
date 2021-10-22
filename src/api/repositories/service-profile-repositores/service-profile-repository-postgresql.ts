@@ -40,7 +40,7 @@ export class ServiceProfileRepositoryPostgresql
   }
 
   async getAsync(id: string): Promise<IServiceProfileDto | undefined> {
-    const query = `SELECT description FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT description FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ?? undefined;
   }
@@ -49,7 +49,7 @@ export class ServiceProfileRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<IServiceProfileDto | undefined> {
-    const query = `SELECT description FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
+    const query = `SELECT description FROM ${this.tableName} WHERE id = $1 AND profile_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ?? undefined;
   }
@@ -79,13 +79,13 @@ export class ServiceProfileRepositoryPostgresql
   }
 
   async checkExistenceAsync(id: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE profile_id = $1`;
+    const query = `SELECT id FROM ${this.tableName} WHERE profile_id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [parentId]);
     return rows[0] ? true : false;
   }
@@ -94,7 +94,7 @@ export class ServiceProfileRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND profile_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ? true : false;
   }

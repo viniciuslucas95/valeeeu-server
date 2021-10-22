@@ -44,7 +44,7 @@ export class ProfileRatingRepositoryPostgresql
   async getAsync(
     id: string
   ): Promise<IIProfileRatingSingleResultDto | undefined> {
-    const query = `SELECT rating, comment, updated_at FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT rating, comment, updated_at FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
     const profileRating = rows[0];
     return profileRating
@@ -60,7 +60,7 @@ export class ProfileRatingRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<IIProfileRatingSingleResultDto | undefined> {
-    const query = `SELECT rating, comment, updated_at FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
+    const query = `SELECT rating, comment, updated_at FROM ${this.tableName} WHERE id = $1 AND profile_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     const profileRating = rows[0];
     return profileRating
@@ -94,13 +94,13 @@ export class ProfileRatingRepositoryPostgresql
   }
 
   async checkExistenceAsync(id: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
-    const query = `SELECT profile_id FROM ${this.tableName} WHERE profile_id = $1`;
+    const query = `SELECT profile_id FROM ${this.tableName} WHERE profile_id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [parentId]);
     return rows[0] ? true : false;
   }
@@ -109,7 +109,7 @@ export class ProfileRatingRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND profile_id = $2`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND profile_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ? true : false;
   }

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { IServiceProfileDto } from '../../entities/dtos/service-profile-dtos';
 import { InvalidRequestError } from '../../errors';
 import { ProfileServiceFactory } from '../../factories/profile-factories';
 import { ServiceProfileServiceFactory } from '../../factories/service-profile-factories';
@@ -9,7 +10,7 @@ export class ServiceProfileController {
     try {
       // Verify access token
       const { accountId, profileId } = ServiceProfileController.getIds(req);
-      const description = req.body.description?.toString() ?? '';
+      const { description } = ServiceProfileController.getData(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,
@@ -17,7 +18,7 @@ export class ServiceProfileController {
       );
       const serviceProfileService = ServiceProfileServiceFactory.create();
       const id = await serviceProfileService.createAsync({
-        description,
+        description: description ?? '',
         profileId,
       });
       res.status(201).json({ id });
@@ -31,8 +32,9 @@ export class ServiceProfileController {
       // Verify access token
       const { accountId, profileId, serviceId } =
         ServiceProfileController.getIds(req);
-      const description = req.body.description?.toString() ?? undefined;
-      if (!description) throw new InvalidRequestError('NoChangesSent');
+      const { description } = ServiceProfileController.getData(req);
+      if (description === undefined)
+        throw new InvalidRequestError('NoChangesSent');
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,
@@ -85,6 +87,23 @@ export class ServiceProfileController {
     }
   }
 
+  static async getAllFromParentAsync(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { profileId } = ServiceProfileController.getIds(req);
+      const serviceProfileService = ServiceProfileServiceFactory.create();
+      const results = await serviceProfileService.getAllByParentIdAsync(
+        profileId
+      );
+      res.status(200).json(results);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async getAllAsync(req: Request, res: Response, next: NextFunction) {
     try {
       const serviceProfileService = ServiceProfileServiceFactory.create();
@@ -93,6 +112,13 @@ export class ServiceProfileController {
     } catch (err) {
       next(err);
     }
+  }
+
+  private static getData(req: Request): Partial<IServiceProfileDto> {
+    const description = req.body.description;
+    if (description && typeof description !== 'string')
+      throw new InvalidRequestError('DescriptionMustBeAString');
+    return { description };
   }
 
   private static getIds(req: Request) {

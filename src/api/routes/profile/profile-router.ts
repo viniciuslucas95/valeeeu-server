@@ -13,8 +13,12 @@ export class ProfileRouter {
       '/accounts/:accountId/profiles/:profileId',
       ProfileController.deleteAsync
     );
-    router.get('/profiles/:profileId', ProfileController.getAsync);
+    router.get(
+      '/accounts/:accountId/profiles',
+      ProfileController.getAllFromParentAsync
+    );
     router.get('/profiles', ProfileController.getAllAsync);
+    router.get('/profiles/:profileId', ProfileController.getAsync);
     return router;
   }
 }

@@ -16,7 +16,7 @@ export class ServiceProfileItemController {
         ServiceProfileItemController.getIds(req);
       const { item, price } = ServiceProfileItemController.getData(req);
       if (!item) throw new InvalidRequestError('NullItem');
-      if (!price) throw new InvalidRequestError('NullPrice');
+      if (price === undefined) throw new InvalidRequestError('NullPrice');
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,
@@ -46,7 +46,8 @@ export class ServiceProfileItemController {
       const { accountId, profileId, serviceId, itemId } =
         ServiceProfileItemController.getIds(req);
       const { item, price } = ServiceProfileItemController.getData(req);
-      if (!item && !price) throw new InvalidRequestError('NoChangesSent');
+      if (!item && price === undefined)
+        throw new InvalidRequestError('NoChangesSent');
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,
@@ -134,11 +135,14 @@ export class ServiceProfileItemController {
     }
   }
 
-  private static getData(req: Request): IServiceProfileItemDto {
-    return {
-      item: req.body.item?.toString() ?? '',
-      price: req.body.price ?? undefined,
-    };
+  private static getData(req: Request): Partial<IServiceProfileItemDto> {
+    const item = req.body.item;
+    const price = req.body.price;
+    if (item && typeof item !== 'string')
+      throw new InvalidRequestError('ItemMustBeAString');
+    if (price && isNaN(price))
+      throw new InvalidRequestError('PriceMustBeANumber');
+    return { item, price };
   }
 
   private static getIds(req: Request) {

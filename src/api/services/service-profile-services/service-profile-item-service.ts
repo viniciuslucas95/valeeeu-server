@@ -4,7 +4,12 @@ import { IServiceProfileItemRepository } from '../../repositories/interfaces/ser
 import { PriceValidator, WordValidator } from '../../validators';
 import { BaseChildService } from '../base-child-service';
 
-interface IServiceProfileItemData extends IServiceProfileItemDto {
+interface IServiceProfileItemCreationData extends IServiceProfileItemDto {
+  serviceId: string;
+}
+
+interface IServiceProfileItemUpdateData
+  extends Partial<IServiceProfileItemDto> {
   serviceId: string;
 }
 
@@ -13,7 +18,7 @@ export class ServiceProfileItemService extends BaseChildService {
     super(repository, new InvalidRequestError('ServiceProfileItemNotFound'));
   }
 
-  async createAsync(data: IServiceProfileItemData): Promise<string> {
+  async createAsync(data: IServiceProfileItemCreationData): Promise<string> {
     const { item, price, serviceId } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
@@ -27,9 +32,9 @@ export class ServiceProfileItemService extends BaseChildService {
     return newId;
   }
 
-  async updateAsync(id: string, data: IServiceProfileItemData) {
-    const { price, item, serviceId: profileId } = data;
-    const result = await this.repository.getByIdAndParentIdAsync(id, profileId);
+  async updateAsync(id: string, data: IServiceProfileItemUpdateData) {
+    const { price, item, serviceId } = data;
+    const result = await this.repository.getByIdAndParentIdAsync(id, serviceId);
     if (!result) throw this.notFoundError;
     await this.repository.updateAsync(id, {
       item: item ? this.getValidatedItem(item) : result.item,

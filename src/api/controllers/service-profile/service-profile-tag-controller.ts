@@ -126,10 +126,11 @@ export class ServiceProfileTagController {
     }
   }
 
-  private static getData(req: Request): IServiceProfileTagDto {
-    return {
-      tag: req.body.tag?.toString() ?? undefined,
-    };
+  private static getData(req: Request): Partial<IServiceProfileTagDto> {
+    const tag = req.body.tag;
+    if (tag && typeof tag !== 'string')
+      throw new InvalidRequestError('TagMustBeAString');
+    return { tag };
   }
 
   private static getIds(req: Request) {

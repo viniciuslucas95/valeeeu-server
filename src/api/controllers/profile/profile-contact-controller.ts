@@ -102,11 +102,14 @@ export class ProfileContactController {
     }
   }
 
-  private static getData(req: Request): IProfileContactDto {
-    return {
-      plataform: req.body.plataform?.toString() ?? undefined,
-      contact: req.body.contact?.toString() ?? undefined,
-    };
+  private static getData(req: Request): Partial<IProfileContactDto> {
+    const plataform = req.body.plataform;
+    const contact = req.body.contact;
+    if (plataform && typeof plataform !== 'string')
+      throw new InvalidRequestError('PlataformMustBeAString');
+    if (contact && typeof contact !== 'string')
+      throw new InvalidRequestError('ContactMustBeAString');
+    return { plataform, contact };
   }
 
   private static getIds(req: Request) {

@@ -1,6 +1,7 @@
 import { Express } from 'express';
 import { ErrorMiddleware } from '../middlewares';
 import { AccountRouter } from './account-router';
+import { AuthRouter } from './auth-router';
 import {
   ProfileContactRouter,
   ProfileRouter,
@@ -28,5 +29,6 @@ export class RouteHandler {
     server.use('/', ProfileRouter.create(), handleError);
 
     server.use('/', AccountRouter.create(), handleError);
+    server.use('/', AuthRouter.create(), handleError);
   }
 }

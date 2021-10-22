@@ -18,6 +18,10 @@ export class ServiceProfileRouter {
     );
     router.get('/profiles/services', ServiceProfileController.getAllAsync);
     router.get(
+      '/profiles/:profileId/services',
+      ServiceProfileController.getAllFromParentAsync
+    );
+    router.get(
       '/profiles/:profileId/services/:serviceId',
       ServiceProfileController.getAsync
     );

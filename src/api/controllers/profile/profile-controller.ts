@@ -31,7 +31,7 @@ export class ProfileController {
       // Verify access token
       const { accountId, profileId } = ProfileController.getIds(req);
       const { name } = ProfileController.getData(req);
-      if (!name) throw new InvalidRequestError('NullName');
+      if (!name) throw new InvalidRequestError('NoChangesSent');
       const profileService = ProfileServiceFactory.create();
       await profileService.updateAsync(profileId, { name, accountId });
       res.sendStatus(204);
@@ -63,6 +63,21 @@ export class ProfileController {
     }
   }
 
+  static async getAllFromParentAsync(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { accountId } = ProfileController.getIds(req);
+      const profileService = ProfileServiceFactory.create();
+      const results = await profileService.getAllByParentIdAsync(accountId);
+      res.status(200).json(results);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async getAllAsync(req: Request, res: Response, next: NextFunction) {
     try {
       const profileService = ProfileServiceFactory.create();
@@ -73,8 +88,11 @@ export class ProfileController {
     }
   }
 
-  private static getData(req: Request): IProfileDto {
-    return { name: req.body.name?.toString() ?? undefined };
+  private static getData(req: Request): Partial<IProfileDto> {
+    const name = req.body.name;
+    if (name && typeof name !== 'string')
+      throw new InvalidRequestError('NameMustBeAString');
+    return { name };
   }
 
   private static getIds(req: Request) {

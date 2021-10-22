@@ -10,6 +10,7 @@ import {
   generateRandomName,
   generateRandomProfile,
   getAllProfilesAsync,
+  getAllProfilesFromAccountAsync,
   getProfileAsync,
   updateProfileAsync,
 } from '../../apis/profile/profile-api';
@@ -43,6 +44,12 @@ describe('Profile routes should', () => {
     test('getting profile', async () => {
       const { status, data } = await getProfileAsync(profileId);
       expect(data).toBeTruthy();
+      expect(status).toBe(200);
+    });
+
+    test('getting all profiles from account', async () => {
+      const { status, data } = await getAllProfilesFromAccountAsync(accountId);
+      expect(data).toHaveLength(1);
       expect(status).toBe(200);
     });
 

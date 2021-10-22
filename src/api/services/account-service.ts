@@ -1,5 +1,9 @@
 import { IAccountDto } from '../entities/dtos';
-import { ConflictError, InvalidRequestError } from '../errors';
+import {
+  ConflictError,
+  InvalidRequestError,
+  UnauthorizedError,
+} from '../errors';
 import { BcryptHandler } from '../helpers';
 import { IAccountRepository } from '../repositories/interfaces/account-repository';
 import { EmailValidator, PasswordValidator } from '../validators';
@@ -10,7 +14,7 @@ export class AccountService extends BaseService {
     super(repository, new InvalidRequestError('AccountNotFound'));
   }
 
-  async createAsync(data: IAccountDto): Promise<string> {
+  async createAsync(data: IAccountDto) {
     const { email, password } = data;
     const { newId, currentDate } = await this.generateNewBaseModelData();
     await this.repository.createAsync({
@@ -43,9 +47,17 @@ export class AccountService extends BaseService {
     await this.repository.deleteAsync(id);
   }
 
+  async validateCredentialsAsync(data: IAccountDto) {
+    const { email, password } = data;
+    const result = await this.repository.getByEmailAsync(email);
+    if (!result) throw this.notFoundError;
+    if (!(await BcryptHandler.compareDataAsync(password, result.password)))
+      throw new UnauthorizedError('WrongCredentials');
+  }
+
   private async getValidatedAndFormatedEmailAsync(value: string) {
     EmailValidator.validate(value);
-    const formatedEmail = this.formatEmail(value);
+    const formatedEmail = value.toLocaleLowerCase();
     if (await this.repository.checkExistenceByEmailAsync(formatedEmail))
       throw new ConflictError('EmailAlreadyExists');
     return formatedEmail;
@@ -53,14 +65,6 @@ export class AccountService extends BaseService {
 
   private async getValidatedAndHashedPasswordAsync(value: string) {
     PasswordValidator.validate(value);
-    return await this.hashPasswordAsync(value);
-  }
-
-  private async hashPasswordAsync(value: string) {
     return await BcryptHandler.hashDataAsync(value);
-  }
-
-  private formatEmail(value: string) {
-    return value.toLocaleLowerCase();
   }
 }

@@ -60,8 +60,12 @@ export class AccountController {
   }
 
   private static getData(req: Request): Partial<IAccountDto> {
-    const email = req.body.email?.toString() ?? undefined;
-    const password = req.body.password?.toString() ?? undefined;
+    const email = req.body.email;
+    const password = req.body.password;
+    if (email && typeof email !== 'string')
+      throw new InvalidRequestError('EmailMustBeAString');
+    if (password && typeof password !== 'string')
+      throw new InvalidRequestError('PasswordMustBeAString');
     return { email, password };
   }
 }

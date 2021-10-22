@@ -43,7 +43,7 @@ export class ServiceProfileTagRepositoryPostgresql
   }
 
   async getAsync(id: string): Promise<IServiceProfileTagDto | undefined> {
-    const query = `SELECT tag FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT tag FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ?? undefined;
   }
@@ -52,7 +52,7 @@ export class ServiceProfileTagRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<IServiceProfileTagDto | undefined> {
-    const query = `SELECT tag FROM ${this.tableName} WHERE id = $1 AND service_profile_id = $2`;
+    const query = `SELECT tag FROM ${this.tableName} WHERE id = $1 AND service_profile_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ?? undefined;
   }
@@ -72,13 +72,13 @@ export class ServiceProfileTagRepositoryPostgresql
   }
 
   async checkExistenceAsync(id: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
     return rows[0] ? true : false;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE service_profile_id = $1`;
+    const query = `SELECT id FROM ${this.tableName} WHERE service_profile_id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [parentId]);
     return rows[0] ? true : false;
   }
@@ -87,7 +87,7 @@ export class ServiceProfileTagRepositoryPostgresql
     id: string,
     parentId: string
   ): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND service_profile_id = $2`;
+    const query = `SELECT id FROM ${this.tableName} WHERE id = $1 AND service_profile_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
     return rows[0] ? true : false;
   }

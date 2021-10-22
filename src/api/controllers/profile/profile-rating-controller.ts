@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { IProfileRatingDto } from '../../entities/dtos/profile-dtos';
 import { InvalidRequestError } from '../../errors';
 import {
   ProfileRatingServiceFactory,
@@ -11,10 +12,8 @@ export class ProfileRatingController {
     try {
       // Verify access token
       const { accountId, profileId } = ProfileRatingController.getIds(req);
-      const rating = req.body.rating ?? undefined;
-      const comment = req.body.comment?.toString() ?? '';
+      const { comment, rating } = ProfileRatingController.getData(req);
       if (!rating) throw new InvalidRequestError('NullRating');
-      if (isNaN(rating)) throw new InvalidRequestError('NaNRating');
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,
@@ -23,7 +22,7 @@ export class ProfileRatingController {
       const profileRatingService = ProfileRatingServiceFactory.create();
       const id = await profileRatingService.createAsync({
         rating,
-        comment,
+        comment: comment ?? '',
         profileId,
       });
       res.status(201).json({ id });
@@ -37,9 +36,9 @@ export class ProfileRatingController {
       // Verify access token
       const { accountId, profileId, ratingId } =
         ProfileRatingController.getIds(req);
-      const rating = req.body.rating ?? undefined;
-      const comment = req.body.comment?.toString() ?? undefined;
-      if (!rating && !comment) throw new InvalidRequestError('NoChangesSent');
+      const { comment, rating } = ProfileRatingController.getData(req);
+      if (!rating && comment === undefined)
+        throw new InvalidRequestError('NoChangesSent');
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,
@@ -100,6 +99,16 @@ export class ProfileRatingController {
     } catch (err) {
       next(err);
     }
+  }
+
+  private static getData(req: Request): Partial<IProfileRatingDto> {
+    const rating = req.body.rating;
+    const comment = req.body.comment;
+    if (rating && isNaN(rating))
+      throw new InvalidRequestError('RatingMustBeANumber');
+    if (comment && typeof comment !== 'string')
+      throw new InvalidRequestError('CommentMustBeAString');
+    return { comment, rating };
   }
 
   private static getIds(req: Request) {
