@@ -67,7 +67,7 @@ export class ProfileController {
     next: NextFunction
   ) {
     try {
-      const { accountId } = ProfileController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
       const profileService = ProfileServiceFactory.create();
       const results = await profileService.getAllByParentIdAsync(accountId);
       res.status(200).json(results);
