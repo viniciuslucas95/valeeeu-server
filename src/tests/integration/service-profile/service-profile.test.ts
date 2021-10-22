@@ -5,6 +5,7 @@ import {
   deleteAccountAsync,
   generateRandomAccount,
 } from '../../apis/account-api';
+import { getTokensAsync } from '../../apis/auth-api';
 import {
   createProfileAsync,
   generateRandomProfile,
@@ -24,14 +25,21 @@ let serviceProfile: IServiceProfileDto;
 let serviceProfileId: string;
 let profile: IProfileDto;
 let profileId: string;
+let accessToken: string;
 let accountId: string;
 
 beforeAll(async () => {
   const account = generateRandomAccount();
   const { data: accountData } = await createAccountAsync(account);
   accountId = accountData.id;
+  const { data: tokensData } = await getTokensAsync(account);
+  accessToken = tokensData.accessToken;
   profile = generateRandomProfile();
-  const { data: profileData } = await createProfileAsync(accountId, profile);
+  const { data: profileData } = await createProfileAsync(
+    accountId,
+    profile,
+    accessToken
+  );
   profileId = profileData.id;
   serviceProfile = generateRandomServiceProfile();
 });
@@ -42,7 +50,8 @@ describe('Service routes should', () => {
       const { data, status } = await createServiceProfileAsync(
         accountId,
         profileId,
-        serviceProfile
+        serviceProfile,
+        accessToken
       );
       serviceProfileId = data.id;
       expect(status).toBe(201);
@@ -78,7 +87,8 @@ describe('Service routes should', () => {
         serviceProfileId,
         {
           description: generateRandomComment(),
-        }
+        },
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -87,7 +97,8 @@ describe('Service routes should', () => {
       const { status } = await deleteServiceProfileAsync(
         accountId,
         profileId,
-        serviceProfileId
+        serviceProfileId,
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -95,5 +106,5 @@ describe('Service routes should', () => {
 });
 
 afterAll(async () => {
-  await deleteAccountAsync(accountId);
+  await deleteAccountAsync(accountId, accessToken);
 });

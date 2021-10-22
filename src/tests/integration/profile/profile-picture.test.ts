@@ -7,6 +7,7 @@ import {
   deleteAccountAsync,
   generateRandomAccount,
 } from '../../apis/account-api';
+import { getTokensAsync } from '../../apis/auth-api';
 import {
   createProfileAsync,
   generateRandomProfile,
@@ -24,14 +25,21 @@ let picture: IProfilePictureDto;
 let pictureId: string;
 let profile: IProfileDto;
 let profileId: string;
+let accessToken: string;
 let accountId: string;
 
 beforeAll(async () => {
   const account = generateRandomAccount();
   const { data: accountData } = await createAccountAsync(account);
   accountId = accountData.id;
+  const { data: tokensData } = await getTokensAsync(account);
+  accessToken = tokensData.accessToken;
   profile = generateRandomProfile();
-  const { data: profileData } = await createProfileAsync(accountId, profile);
+  const { data: profileData } = await createProfileAsync(
+    accountId,
+    profile,
+    accessToken
+  );
   profileId = profileData.id;
   picture = { picture: await getPngPicture() };
 });
@@ -42,7 +50,8 @@ describe('Profile picture routes should', () => {
       const { status, data } = await createProfilePictureAsync(
         accountId,
         profileId,
-        picture
+        picture,
+        accessToken
       );
       pictureId = data.id;
       expect(status).toBe(201);
@@ -70,7 +79,8 @@ describe('Profile picture routes should', () => {
         pictureId,
         {
           picture: await getJpgPicture(),
-        }
+        },
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -79,7 +89,8 @@ describe('Profile picture routes should', () => {
       const { status } = await deleteProfilePictureAsync(
         accountId,
         profileId,
-        pictureId
+        pictureId,
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -87,5 +98,5 @@ describe('Profile picture routes should', () => {
 });
 
 afterAll(async () => {
-  await deleteAccountAsync(accountId);
+  await deleteAccountAsync(accountId, accessToken);
 });

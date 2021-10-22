@@ -1,37 +1,47 @@
 import axios from 'axios';
 import { IProfilePictureDto } from '../../../api/entities/dtos/profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
-import { axiosConfig } from '../../axios-config';
+import {
+  axiosConfig,
+  getAxiosConfigWithAccessTokenHeader,
+} from '../../axios-config';
 
 export async function createProfilePictureAsync(
   accountId: string,
   profileId: string,
-  data: Partial<IProfilePictureDto>
+  data: Partial<IProfilePictureDto>,
+  accessToken: string
 ) {
-  return await axios.post(getFullUrl(accountId, profileId), data, axiosConfig);
+  return await axios.post(
+    getFullUrl(accountId, profileId),
+    data,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
 export async function updateProfilePictureAsync(
   accountId: string,
   profileId: string,
   pictureId: string,
-  data: Partial<IProfilePictureDto>
+  data: Partial<IProfilePictureDto>,
+  accessToken: string
 ) {
   return await axios.patch(
     getFullUrl(accountId, profileId, pictureId),
     data,
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
 export async function deleteProfilePictureAsync(
   accountId: string,
   profileId: string,
-  pictureId: string
+  pictureId: string,
+  accessToken: string
 ) {
   return await axios.delete(
     getFullUrl(accountId, profileId, pictureId),
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 

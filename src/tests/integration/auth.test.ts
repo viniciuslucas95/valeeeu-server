@@ -25,7 +25,7 @@ describe('Auth routes should', () => {
   describe('succeed on', () => {
     test('getting tokens', async () => {
       const { email, password } = account;
-      const { status, data } = await getTokensAsync(email, password);
+      const { status, data } = await getTokensAsync(account);
       refreshToken = data.refreshToken;
       accessToken = data.accessToken;
       expect(data.refreshToken).toBeTruthy();
@@ -50,5 +50,5 @@ describe('Auth routes should', () => {
 });
 
 afterAll(async () => {
-  await deleteAccountAsync(accountId);
+  await deleteAccountAsync(accountId, accessToken);
 });

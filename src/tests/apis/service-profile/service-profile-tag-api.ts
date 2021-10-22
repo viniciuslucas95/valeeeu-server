@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { IServiceProfileTagDto } from '../../../api/entities/dtos/service-profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
-import { axiosConfig } from '../../axios-config';
+import {
+  axiosConfig,
+  getAxiosConfigWithAccessTokenHeader,
+} from '../../axios-config';
 import { generateRandomTitle } from '../profile/profile-contact-api';
 
 export function generateRandomServiceProfileTag(): IServiceProfileTagDto {
@@ -12,12 +15,13 @@ export async function createServiceProfileTagAsync(
   accountId: string,
   profileId: string,
   serviceId: string,
-  data: Partial<IServiceProfileTagDto>
+  data: Partial<IServiceProfileTagDto>,
+  accessToken: string
 ) {
   return await axios.post(
     getFullUrl(accountId, profileId, serviceId),
     data,
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
@@ -26,12 +30,13 @@ export async function updateServiceProfileTagAsync(
   profileId: string,
   serviceId: string,
   tagId: string,
-  data: Partial<IServiceProfileTagDto>
+  data: Partial<IServiceProfileTagDto>,
+  accessToken: string
 ) {
   return await axios.patch(
     getFullUrl(accountId, profileId, serviceId, tagId),
     data,
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
@@ -39,11 +44,12 @@ export async function deleteServiceProfileTagAsync(
   accountId: string,
   profileId: string,
   serviceId: string,
-  tagId: string
+  tagId: string,
+  accessToken: string
 ) {
   return await axios.delete(
     getFullUrl(accountId, profileId, serviceId, tagId),
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 

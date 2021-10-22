@@ -8,6 +8,7 @@ import {
   deleteAccountAsync,
   generateRandomAccount,
 } from '../../apis/account-api';
+import { getTokensAsync } from '../../apis/auth-api';
 import {
   createProfileAsync,
   generateRandomProfile,
@@ -32,20 +33,28 @@ let serviceProfile: IServiceProfileDto;
 let serviceProfileId: string;
 let profile: IProfileDto;
 let profileId: string;
+let accessToken: string;
 let accountId: string;
 
 beforeAll(async () => {
   const account = generateRandomAccount();
   const { data: accountData } = await createAccountAsync(account);
   accountId = accountData.id;
+  const { data: tokensData } = await getTokensAsync(account);
+  accessToken = tokensData.accessToken;
   profile = generateRandomProfile();
-  const { data: profileData } = await createProfileAsync(accountId, profile);
+  const { data: profileData } = await createProfileAsync(
+    accountId,
+    profile,
+    accessToken
+  );
   profileId = profileData.id;
   serviceProfile = generateRandomServiceProfile();
   const { data: serviceProfileData } = await createServiceProfileAsync(
     accountId,
     profileId,
-    serviceProfile
+    serviceProfile,
+    accessToken
   );
   serviceProfileId = serviceProfileData.id;
   serviceProfileTag = generateRandomServiceProfileTag();
@@ -58,7 +67,8 @@ describe('Service tag routes should', () => {
         accountId,
         profileId,
         serviceProfileId,
-        serviceProfileTag
+        serviceProfileTag,
+        accessToken
       );
       serviceProfileTagId = data.id;
       expect(status).toBe(201);
@@ -91,7 +101,8 @@ describe('Service tag routes should', () => {
         serviceProfileTagId,
         {
           tag: generateRandomTitle(),
-        }
+        },
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -101,7 +112,8 @@ describe('Service tag routes should', () => {
         accountId,
         profileId,
         serviceProfileId,
-        serviceProfileTagId
+        serviceProfileTagId,
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -109,5 +121,5 @@ describe('Service tag routes should', () => {
 });
 
 afterAll(async () => {
-  await deleteAccountAsync(accountId);
+  await deleteAccountAsync(accountId, accessToken);
 });

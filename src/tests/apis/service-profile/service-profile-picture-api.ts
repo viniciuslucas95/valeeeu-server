@@ -1,18 +1,22 @@
 import axios from 'axios';
 import { IServiceProfilePictureDto } from '../../../api/entities/dtos/service-profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
-import { axiosConfig } from '../../axios-config';
+import {
+  axiosConfig,
+  getAxiosConfigWithAccessTokenHeader,
+} from '../../axios-config';
 
 export async function createServiceProfilePictureAsync(
   accountId: string,
   profileId: string,
   serviceId: string,
-  data: Partial<IServiceProfilePictureDto>
+  data: Partial<IServiceProfilePictureDto>,
+  accessToken: string
 ) {
   return await axios.post(
     getFullUrl(accountId, profileId, serviceId),
     data,
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
@@ -21,12 +25,13 @@ export async function updateServiceProfilePictureAsync(
   profileId: string,
   serviceId: string,
   pictureId: string,
-  data: Partial<IServiceProfilePictureDto>
+  data: Partial<IServiceProfilePictureDto>,
+  accessToken: string
 ) {
   return await axios.patch(
     getFullUrl(accountId, profileId, serviceId, pictureId),
     data,
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
@@ -34,11 +39,12 @@ export async function deleteServiceProfilePictureAsync(
   accountId: string,
   profileId: string,
   serviceId: string,
-  pictureId: string
+  pictureId: string,
+  accessToken: string
 ) {
   return await axios.delete(
     getFullUrl(accountId, profileId, serviceId, pictureId),
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 

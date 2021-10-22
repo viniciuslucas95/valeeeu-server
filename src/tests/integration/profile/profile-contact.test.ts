@@ -7,6 +7,7 @@ import {
   deleteAccountAsync,
   generateRandomAccount,
 } from '../../apis/account-api';
+import { getTokensAsync } from '../../apis/auth-api';
 import {
   createProfileAsync,
   generateRandomProfile,
@@ -25,14 +26,21 @@ let contact: IProfileContactDto;
 let contactId: string;
 let profile: IProfileDto;
 let profileId: string;
+let accessToken: string;
 let accountId: string;
 
 beforeAll(async () => {
   const account = generateRandomAccount();
   const { data: accountData } = await createAccountAsync(account);
   accountId = accountData.id;
+  const { data: tokensData } = await getTokensAsync(account);
+  accessToken = tokensData.accessToken;
   profile = generateRandomProfile();
-  const { data: profileData } = await createProfileAsync(accountId, profile);
+  const { data: profileData } = await createProfileAsync(
+    accountId,
+    profile,
+    accessToken
+  );
   profileId = profileData.id;
   contact = generateRandomContact();
 });
@@ -43,7 +51,8 @@ describe('Profile contact routes should', () => {
       const { data, status } = await createProfileContactAsync(
         accountId,
         profileId,
-        contact
+        contact,
+        accessToken
       );
       contactId = data.id;
       expect(status).toBe(201);
@@ -72,7 +81,8 @@ describe('Profile contact routes should', () => {
           contactId,
           {
             plataform: generateRandomTitle(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -84,7 +94,8 @@ describe('Profile contact routes should', () => {
           contactId,
           {
             contact: generateRandomTitle(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -97,7 +108,8 @@ describe('Profile contact routes should', () => {
           {
             plataform: generateRandomTitle(),
             contact: generateRandomTitle(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -107,7 +119,8 @@ describe('Profile contact routes should', () => {
       const { status } = await deleteProfileContactAsync(
         accountId,
         profileId,
-        contactId
+        contactId,
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -115,5 +128,5 @@ describe('Profile contact routes should', () => {
 });
 
 afterAll(async () => {
-  await deleteAccountAsync(accountId);
+  await deleteAccountAsync(accountId, accessToken);
 });

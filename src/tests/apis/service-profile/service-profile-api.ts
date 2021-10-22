@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { IServiceProfileDto } from '../../../api/entities/dtos/service-profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
-import { axiosConfig } from '../../axios-config';
+import {
+  axiosConfig,
+  getAxiosConfigWithAccessTokenHeader,
+} from '../../axios-config';
 import { generateRandomComment } from '../profile/profile-rating-api';
 
 export function generateRandomServiceProfile(): IServiceProfileDto {
@@ -11,32 +14,39 @@ export function generateRandomServiceProfile(): IServiceProfileDto {
 export async function createServiceProfileAsync(
   accountId: string,
   profileId: string,
-  data: Partial<IServiceProfileDto>
+  data: Partial<IServiceProfileDto>,
+  accessToken: string
 ) {
-  return await axios.post(getFullUrl(accountId, profileId), data, axiosConfig);
+  return await axios.post(
+    getFullUrl(accountId, profileId),
+    data,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
 export async function updateServiceProfileAsync(
   accountId: string,
   profileId: string,
   serviceId: string,
-  data: Partial<IServiceProfileDto>
+  data: Partial<IServiceProfileDto>,
+  accessToken: string
 ) {
   return await axios.patch(
     getFullUrl(accountId, profileId, serviceId),
     data,
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
 export async function deleteServiceProfileAsync(
   accountId: string,
   profileId: string,
-  serviceId: string
+  serviceId: string,
+  accessToken: string
 ) {
   return await axios.delete(
     getFullUrl(accountId, profileId, serviceId),
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 

@@ -6,14 +6,14 @@ import {
   ServiceProfileItemServiceFactory,
   ServiceProfileServiceFactory,
 } from '../../factories/service-profile-service-factories';
+import { RequestHeaderHandler } from '../request-header-handler';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ServiceProfileItemController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId } =
-        ServiceProfileItemController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId } = ServiceProfileItemController.getIds(req);
       const { item, price } = ServiceProfileItemController.getData(req);
       if (!item) throw new InvalidRequestError('NullItem');
       if (price === undefined) throw new InvalidRequestError('NullPrice');
@@ -42,8 +42,8 @@ export class ServiceProfileItemController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId, itemId } =
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId, itemId } =
         ServiceProfileItemController.getIds(req);
       const { item, price } = ServiceProfileItemController.getData(req);
       if (!item && price === undefined)
@@ -73,8 +73,8 @@ export class ServiceProfileItemController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId, itemId } =
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId, itemId } =
         ServiceProfileItemController.getIds(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(

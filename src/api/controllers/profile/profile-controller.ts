@@ -3,17 +3,15 @@ import { IProfileDto } from '../../entities/dtos/profile-dtos';
 import { InvalidRequestError } from '../../errors';
 import { AccountServiceFactory } from '../../factories';
 import { ProfileServiceFactory } from '../../factories/profile-service-factories';
+import { RequestHeaderHandler } from '../request-header-handler';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ProfileController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId } = ProfileController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
       const { name } = ProfileController.getData(req);
       if (!name) throw new InvalidRequestError('NullName');
-      const accountService = AccountServiceFactory.create();
-      await accountService.validateExistenceAsync(accountId);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateUniqueExistenceByParentId(accountId);
       const id = await profileService.createAsync({
@@ -28,8 +26,8 @@ export class ProfileController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId } = ProfileController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId } = ProfileController.getIds(req);
       const { name } = ProfileController.getData(req);
       if (!name) throw new InvalidRequestError('NoChangesSent');
       const profileService = ProfileServiceFactory.create();
@@ -42,8 +40,8 @@ export class ProfileController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId } = ProfileController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId } = ProfileController.getIds(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.deleteAsync(profileId, accountId);
       res.sendStatus(204);

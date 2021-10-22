@@ -5,13 +5,14 @@ import {
   ProfileContactServiceFactory,
   ProfileServiceFactory,
 } from '../../factories/profile-service-factories';
+import { RequestHeaderHandler } from '../request-header-handler';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ProfileContactController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId } = ProfileContactController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId } = ProfileContactController.getIds(req);
       const { plataform, contact } = ProfileContactController.getData(req);
       if (!plataform) throw new InvalidRequestError('NullPlataform');
       if (!contact) throw new InvalidRequestError('NullContact');
@@ -34,9 +35,8 @@ export class ProfileContactController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, contactId } =
-        ProfileContactController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, contactId } = ProfileContactController.getIds(req);
       const { plataform, contact } = ProfileContactController.getData(req);
       if (!plataform && !contact)
         throw new InvalidRequestError('NoChangesSent');
@@ -59,9 +59,8 @@ export class ProfileContactController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, contactId } =
-        ProfileContactController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, contactId } = ProfileContactController.getIds(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,

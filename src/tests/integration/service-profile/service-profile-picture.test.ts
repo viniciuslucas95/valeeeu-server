@@ -8,6 +8,7 @@ import {
   deleteAccountAsync,
   generateRandomAccount,
 } from '../../apis/account-api';
+import { getTokensAsync } from '../../apis/auth-api';
 import {
   createProfileAsync,
   generateRandomProfile,
@@ -31,20 +32,28 @@ let serviceProfile: IServiceProfileDto;
 let serviceProfileId: string;
 let profile: IProfileDto;
 let profileId: string;
+let accessToken: string;
 let accountId: string;
 
 beforeAll(async () => {
   const account = generateRandomAccount();
   const { data: accountData } = await createAccountAsync(account);
   accountId = accountData.id;
+  const { data: tokensData } = await getTokensAsync(account);
+  accessToken = tokensData.accessToken;
   profile = generateRandomProfile();
-  const { data: profileData } = await createProfileAsync(accountId, profile);
+  const { data: profileData } = await createProfileAsync(
+    accountId,
+    profile,
+    accessToken
+  );
   profileId = profileData.id;
   serviceProfile = generateRandomServiceProfile();
   const { data: serviceProfileData } = await createServiceProfileAsync(
     accountId,
     profileId,
-    serviceProfile
+    serviceProfile,
+    accessToken
   );
   serviceProfileId = serviceProfileData.id;
   serviceProfilePicture = { picture: await getPngPicture() };
@@ -57,7 +66,8 @@ describe('Service picture routes should', () => {
         accountId,
         profileId,
         serviceProfileId,
-        serviceProfilePicture
+        serviceProfilePicture,
+        accessToken
       );
       serviceProfilePictureId = data.id;
       expect(status).toBe(201);
@@ -90,7 +100,8 @@ describe('Service picture routes should', () => {
         serviceProfilePictureId,
         {
           picture: await getJpgPicture(),
-        }
+        },
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -100,7 +111,8 @@ describe('Service picture routes should', () => {
         accountId,
         profileId,
         serviceProfileId,
-        serviceProfilePictureId
+        serviceProfilePictureId,
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -108,5 +120,5 @@ describe('Service picture routes should', () => {
 });
 
 afterAll(async () => {
-  await deleteAccountAsync(accountId);
+  await deleteAccountAsync(accountId, accessToken);
 });

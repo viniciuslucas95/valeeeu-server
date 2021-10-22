@@ -6,13 +6,14 @@ import {
   ServiceProfilePictureServiceFactory,
   ServiceProfileServiceFactory,
 } from '../../factories/service-profile-service-factories';
+import { RequestHeaderHandler } from '../request-header-handler';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ServiceProfilePictureController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId } =
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId } =
         ServiceProfilePictureController.getIds(req);
       const { picture } = ServiceProfilePictureController.getData(req);
       if (!picture) throw new InvalidRequestError('NullPicture');
@@ -40,8 +41,8 @@ export class ServiceProfilePictureController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId, pictureId } =
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId, pictureId } =
         ServiceProfilePictureController.getIds(req);
       const { picture } = ServiceProfilePictureController.getData(req);
       if (!picture) throw new InvalidRequestError('NoChangesSent');
@@ -69,8 +70,8 @@ export class ServiceProfilePictureController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId, pictureId } =
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId, pictureId } =
         ServiceProfilePictureController.getIds(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(

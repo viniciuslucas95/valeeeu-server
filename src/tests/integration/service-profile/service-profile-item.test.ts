@@ -8,6 +8,7 @@ import {
   deleteAccountAsync,
   generateRandomAccount,
 } from '../../apis/account-api';
+import { getTokensAsync } from '../../apis/auth-api';
 import {
   createProfileAsync,
   generateRandomProfile,
@@ -33,20 +34,28 @@ let serviceProfile: IServiceProfileDto;
 let serviceProfileId: string;
 let profile: IProfileDto;
 let profileId: string;
+let accessToken: string;
 let accountId: string;
 
 beforeAll(async () => {
   const account = generateRandomAccount();
   const { data: accountData } = await createAccountAsync(account);
   accountId = accountData.id;
+  const { data: tokensData } = await getTokensAsync(account);
+  accessToken = tokensData.accessToken;
   profile = generateRandomProfile();
-  const { data: profileData } = await createProfileAsync(accountId, profile);
+  const { data: profileData } = await createProfileAsync(
+    accountId,
+    profile,
+    accessToken
+  );
   profileId = profileData.id;
   serviceProfile = generateRandomServiceProfile();
   const { data: serviceProfileData } = await createServiceProfileAsync(
     accountId,
     profileId,
-    serviceProfile
+    serviceProfile,
+    accessToken
   );
   serviceProfileId = serviceProfileData.id;
   serviceProfileItem = generateRandomServiceProfileItem();
@@ -59,7 +68,8 @@ describe('Service item routes should', () => {
         accountId,
         profileId,
         serviceProfileId,
-        serviceProfileItem
+        serviceProfileItem,
+        accessToken
       );
       serviceProfileItemId = data.id;
       expect(status).toBe(201);
@@ -93,7 +103,8 @@ describe('Service item routes should', () => {
           serviceProfileItemId,
           {
             item: generateRandomTitle(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -106,7 +117,8 @@ describe('Service item routes should', () => {
           serviceProfileItemId,
           {
             price: generateRandomPrice(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -120,7 +132,8 @@ describe('Service item routes should', () => {
           {
             item: generateRandomTitle(),
             price: generateRandomPrice(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -131,7 +144,8 @@ describe('Service item routes should', () => {
         accountId,
         profileId,
         serviceProfileId,
-        serviceProfileItemId
+        serviceProfileItemId,
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -139,5 +153,5 @@ describe('Service item routes should', () => {
 });
 
 afterAll(async () => {
-  await deleteAccountAsync(accountId);
+  await deleteAccountAsync(accountId, accessToken);
 });

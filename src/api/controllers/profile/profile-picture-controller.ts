@@ -5,13 +5,14 @@ import {
   ProfilePictureServiceFactory,
   ProfileServiceFactory,
 } from '../../factories/profile-service-factories';
+import { RequestHeaderHandler } from '../request-header-handler';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ProfilePictureController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId } = ProfilePictureController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId } = ProfilePictureController.getIds(req);
       const { picture } = ProfilePictureController.getData(req);
       if (!picture) throw new InvalidRequestError('NullPicture');
       const profileService = ProfileServiceFactory.create();
@@ -32,9 +33,8 @@ export class ProfilePictureController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, pictureId } =
-        ProfilePictureController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, pictureId } = ProfilePictureController.getIds(req);
       const { picture } = ProfilePictureController.getData(req);
       if (!picture) throw new InvalidRequestError('NoChangesSent');
       const profileService = ProfileServiceFactory.create();
@@ -55,9 +55,8 @@ export class ProfilePictureController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, pictureId } =
-        ProfilePictureController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, pictureId } = ProfilePictureController.getIds(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,

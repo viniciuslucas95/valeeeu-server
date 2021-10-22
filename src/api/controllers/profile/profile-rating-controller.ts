@@ -5,13 +5,14 @@ import {
   ProfileRatingServiceFactory,
   ProfileServiceFactory,
 } from '../../factories/profile-service-factories';
+import { RequestHeaderHandler } from '../request-header-handler';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ProfileRatingController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId } = ProfileRatingController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId } = ProfileRatingController.getIds(req);
       const { comment, rating } = ProfileRatingController.getData(req);
       if (!rating) throw new InvalidRequestError('NullRating');
       const profileService = ProfileServiceFactory.create();
@@ -33,9 +34,8 @@ export class ProfileRatingController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, ratingId } =
-        ProfileRatingController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, ratingId } = ProfileRatingController.getIds(req);
       const { comment, rating } = ProfileRatingController.getData(req);
       if (!rating && comment === undefined)
         throw new InvalidRequestError('NoChangesSent');
@@ -58,9 +58,8 @@ export class ProfileRatingController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, ratingId } =
-        ProfileRatingController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, ratingId } = ProfileRatingController.getIds(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,

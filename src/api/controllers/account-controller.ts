@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IAccountDto } from '../entities/dtos';
 import { InvalidRequestError } from '../errors';
 import { AccountServiceFactory } from '../factories';
-import { RequestParamsHandler } from './request-params-handler';
+import { RequestHeaderHandler } from './request-header-handler';
 
 export class AccountController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
@@ -23,8 +23,7 @@ export class AccountController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId } = RequestParamsHandler.getAccountId(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
       const { email, password } = AccountController.getData(req);
       const service = AccountServiceFactory.create();
       if (!email && !password) throw new InvalidRequestError('NoChangesSent');
@@ -37,8 +36,7 @@ export class AccountController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId } = RequestParamsHandler.getAccountId(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
       const service = AccountServiceFactory.create();
       await service.deleteAsync(accountId);
       res.sendStatus(204);
@@ -49,8 +47,7 @@ export class AccountController {
 
   static async getAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId } = RequestParamsHandler.getAccountId(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
       const service = AccountServiceFactory.create();
       const result = await service.getAsync(accountId);
       res.status(200).json(result);

@@ -5,7 +5,10 @@ import {
   IProfileRatingDto,
 } from '../../../api/entities/dtos/profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
-import { axiosConfig } from '../../axios-config';
+import {
+  axiosConfig,
+  getAxiosConfigWithAccessTokenHeader,
+} from '../../axios-config';
 
 const { number } = datatype;
 const { text } = lorem;
@@ -31,32 +34,39 @@ export function generateRandomComment() {
 export async function createProfileRatingAsync(
   accountId: string,
   profileId: string,
-  data: Partial<IProfileRatingDto>
+  data: Partial<IProfileRatingDto>,
+  accessToken: string
 ) {
-  return await axios.post(getFullUrl(accountId, profileId), data, axiosConfig);
+  return await axios.post(
+    getFullUrl(accountId, profileId),
+    data,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
 export async function updateProfileRatingAsync(
   accountId: string,
   profileId: string,
   ratingId: string,
-  data: Partial<IProfileRatingDto>
+  data: Partial<IProfileRatingDto>,
+  accessToken: string
 ) {
   return await axios.patch(
     getFullUrl(accountId, profileId, ratingId),
     data,
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
 export async function deleteProfileRatingAsync(
   accountId: string,
   profileId: string,
-  ratingId: string
+  ratingId: string,
+  accessToken: string
 ) {
   return await axios.delete(
     getFullUrl(accountId, profileId, ratingId),
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 

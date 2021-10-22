@@ -3,13 +3,14 @@ import { IServiceProfileDto } from '../../entities/dtos/service-profile-dtos';
 import { InvalidRequestError } from '../../errors';
 import { ProfileServiceFactory } from '../../factories/profile-service-factories';
 import { ServiceProfileServiceFactory } from '../../factories/service-profile-service-factories';
+import { RequestHeaderHandler } from '../request-header-handler';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ServiceProfileController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId } = ServiceProfileController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId } = ServiceProfileController.getIds(req);
       const { description } = ServiceProfileController.getData(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
@@ -29,9 +30,8 @@ export class ServiceProfileController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId } =
-        ServiceProfileController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId } = ServiceProfileController.getIds(req);
       const { description } = ServiceProfileController.getData(req);
       if (description === undefined)
         throw new InvalidRequestError('NoChangesSent');
@@ -57,9 +57,8 @@ export class ServiceProfileController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId } =
-        ServiceProfileController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId } = ServiceProfileController.getIds(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(
         profileId,

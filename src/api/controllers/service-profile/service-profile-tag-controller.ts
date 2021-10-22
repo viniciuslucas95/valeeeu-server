@@ -6,14 +6,14 @@ import {
   ServiceProfileServiceFactory,
   ServiceProfileTagServiceFactory,
 } from '../../factories/service-profile-service-factories';
+import { RequestHeaderHandler } from '../request-header-handler';
 import { RequestParamsHandler } from '../request-params-handler';
 
 export class ServiceProfileTagController {
   static async createAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId } =
-        ServiceProfileTagController.getIds(req);
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId } = ServiceProfileTagController.getIds(req);
       const { tag } = ServiceProfileTagController.getData(req);
       if (!tag) throw new InvalidRequestError('NullTag');
       const profileService = ProfileServiceFactory.create();
@@ -39,8 +39,8 @@ export class ServiceProfileTagController {
 
   static async updateAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId, tagId } =
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId, tagId } =
         ServiceProfileTagController.getIds(req);
       const { tag } = ServiceProfileTagController.getData(req);
       if (!tag) throw new InvalidRequestError('NoChangesSent');
@@ -67,8 +67,8 @@ export class ServiceProfileTagController {
 
   static async deleteAsync(req: Request, res: Response, next: NextFunction) {
     try {
-      // Verify access token
-      const { accountId, profileId, serviceId, tagId } =
+      const accountId = await RequestHeaderHandler.verifyAccessTokenAsync(req);
+      const { profileId, serviceId, tagId } =
         ServiceProfileTagController.getIds(req);
       const profileService = ProfileServiceFactory.create();
       await profileService.validateExistenceByIdAndParentIdAsync(

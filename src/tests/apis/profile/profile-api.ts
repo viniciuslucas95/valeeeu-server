@@ -2,7 +2,10 @@ import axios from 'axios';
 import { name } from 'faker';
 import { IProfileDto } from '../../../api/entities/dtos/profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
-import { axiosConfig } from '../../axios-config';
+import {
+  axiosConfig,
+  getAxiosConfigWithAccessTokenHeader,
+} from '../../axios-config';
 
 const { findName } = name;
 
@@ -16,21 +19,38 @@ export function generateRandomName() {
 
 export async function createProfileAsync(
   accountId: string,
-  data: Partial<IProfileDto>
+  data: Partial<IProfileDto>,
+  accessToken: string
 ) {
-  return await axios.post(getFullUrl(accountId), data, axiosConfig);
+  return await axios.post(
+    getFullUrl(accountId),
+    data,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
 export async function updateProfileAsync(
   accountId: string,
   profileId: string,
-  data: Partial<IProfileDto>
+  data: Partial<IProfileDto>,
+  accessToken: string
 ) {
-  return await axios.patch(getFullUrl(accountId, profileId), data, axiosConfig);
+  return await axios.patch(
+    getFullUrl(accountId, profileId),
+    data,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
-export async function deleteProfileAsync(accountId: string, profileId: string) {
-  return await axios.delete(getFullUrl(accountId, profileId), axiosConfig);
+export async function deleteProfileAsync(
+  accountId: string,
+  profileId: string,
+  accessToken: string
+) {
+  return await axios.delete(
+    getFullUrl(accountId, profileId),
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
 export async function getProfileAsync(profileId: string) {

@@ -7,6 +7,7 @@ import {
   deleteAccountAsync,
   generateRandomAccount,
 } from '../../apis/account-api';
+import { getTokensAsync } from '../../apis/auth-api';
 import {
   createProfileAsync,
   generateRandomProfile,
@@ -26,14 +27,21 @@ let rating: IProfileRatingDto;
 let ratingId: string;
 let profile: IProfileDto;
 let profileId: string;
+let accessToken: string;
 let accountId: string;
 
 beforeAll(async () => {
   const account = generateRandomAccount();
   const { data: accountData } = await createAccountAsync(account);
   accountId = accountData.id;
+  const { data: tokensData } = await getTokensAsync(account);
+  accessToken = tokensData.accessToken;
   profile = generateRandomProfile();
-  const { data: profileData } = await createProfileAsync(accountId, profile);
+  const { data: profileData } = await createProfileAsync(
+    accountId,
+    profile,
+    accessToken
+  );
   profileId = profileData.id;
   rating = generateRandomRating();
 });
@@ -44,7 +52,8 @@ describe('Profile rating routes should', () => {
       const { status, data } = await createProfileRatingAsync(
         accountId,
         profileId,
-        rating
+        rating,
+        accessToken
       );
       ratingId = data.id;
       expect(status).toBe(201);
@@ -70,7 +79,8 @@ describe('Profile rating routes should', () => {
           ratingId,
           {
             rating: generateRandomRatingNumber(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -82,7 +92,8 @@ describe('Profile rating routes should', () => {
           ratingId,
           {
             comment: generateRandomComment(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -95,7 +106,8 @@ describe('Profile rating routes should', () => {
           {
             rating: generateRandomRatingNumber(),
             comment: generateRandomComment(),
-          }
+          },
+          accessToken
         );
         expect(status).toBe(204);
       });
@@ -105,7 +117,8 @@ describe('Profile rating routes should', () => {
       const { status } = await deleteProfileRatingAsync(
         accountId,
         profileId,
-        ratingId
+        ratingId,
+        accessToken
       );
       expect(status).toBe(204);
     });
@@ -113,5 +126,5 @@ describe('Profile rating routes should', () => {
 });
 
 afterAll(async () => {
-  await deleteAccountAsync(accountId);
+  await deleteAccountAsync(accountId, accessToken);
 });

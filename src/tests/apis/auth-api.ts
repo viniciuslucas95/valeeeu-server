@@ -1,10 +1,12 @@
 import axios from 'axios';
+import { IAccountDto } from '../../api/entities/dtos';
 import { EnvironmentConfig } from '../../configs';
 import { axiosConfig } from '../axios-config';
 
 const url = `http://localhost:${EnvironmentConfig.serverPort}/auth`;
 
-export async function getTokensAsync(email: string, password: string) {
+export async function getTokensAsync(data: IAccountDto) {
+  const { email, password } = data;
   return await axios.get(
     `${url}?email=${email}&password=${password}`,
     axiosConfig

@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { EnvironmentConfig } from '../../configs';
 import { internet } from 'faker';
-import { axiosConfig } from '../axios-config';
+import {
+  axiosConfig,
+  getAxiosConfigWithAccessTokenHeader,
+} from '../axios-config';
 import { IAccountDto } from '../../api/entities/dtos';
 
 const { email, password } = internet;
@@ -28,15 +31,26 @@ export async function createAccountAsync(data: Partial<IAccountDto>) {
 
 export async function updateAccountAsync(
   id: string,
-  data: Partial<IAccountDto>
+  data: Partial<IAccountDto>,
+  accessToken: string
 ) {
-  return await axios.patch(`${url}/${id}`, data, axiosConfig);
+  return await axios.patch(
+    `${url}/${id}`,
+    data,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
-export async function deleteAccountAsync(id: string) {
-  return await axios.delete(`${url}/${id}`, axiosConfig);
+export async function deleteAccountAsync(id: string, accessToken: string) {
+  return await axios.delete(
+    `${url}/${id}`,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
-export async function getAccountAsync(id: string) {
-  return await axios.get(`${url}/${id}`, axiosConfig);
+export async function getAccountAsync(id: string, accessToken: string) {
+  return await axios.get(
+    `${url}/${id}`,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }

@@ -2,7 +2,10 @@ import axios from 'axios';
 import { name } from 'faker';
 import { IProfileContactDto } from '../../../api/entities/dtos/profile-dtos';
 import { EnvironmentConfig } from '../../../configs';
-import { axiosConfig } from '../../axios-config';
+import {
+  axiosConfig,
+  getAxiosConfigWithAccessTokenHeader,
+} from '../../axios-config';
 
 const { title } = name;
 
@@ -17,32 +20,39 @@ export function generateRandomTitle() {
 export async function createProfileContactAsync(
   accountId: string,
   profileId: string,
-  data: Partial<IProfileContactDto>
+  data: Partial<IProfileContactDto>,
+  accessToken: string
 ) {
-  return await axios.post(getFullUrl(accountId, profileId), data, axiosConfig);
+  return await axios.post(
+    getFullUrl(accountId, profileId),
+    data,
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
 export async function updateProfileContactAsync(
   accountId: string,
   profileId: string,
   contactId: string,
-  data: Partial<IProfileContactDto>
+  data: Partial<IProfileContactDto>,
+  accessToken: string
 ) {
   return await axios.patch(
     getFullUrl(accountId, profileId, contactId),
     data,
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
 export async function deleteProfileContactAsync(
   accountId: string,
   profileId: string,
-  contactId: string
+  contactId: string,
+  accessToken: string
 ) {
   return await axios.delete(
     getFullUrl(accountId, profileId, contactId),
-    axiosConfig
+    getAxiosConfigWithAccessTokenHeader(accessToken)
   );
 }
 
