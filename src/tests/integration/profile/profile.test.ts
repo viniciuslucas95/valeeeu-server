@@ -61,7 +61,10 @@ describe('Profile routes should', () => {
     });
 
     test('getting all profiles from account', async () => {
-      const { status, data } = await getAllProfilesFromAccountAsync(accountId);
+      const { status, data } = await getAllProfilesFromAccountAsync(
+        accountId,
+        accessToken
+      );
       expect(data).toHaveLength(1);
       expect(status).toBe(200);
     });

@@ -1,7 +1,7 @@
 import { IServiceProfileItemDto } from '../../entities/dtos/service-profile-dtos';
 import { InvalidRequestError } from '../../errors';
 import { IServiceProfileItemRepository } from '../../repositories/interfaces/service-profile/service-profile-item-repository';
-import { PriceValidator, WordValidator } from '../../validators';
+import { PositiveNumberValidator, WordValidator } from '../../validators';
 import { BaseChildService } from '../base-child-service';
 
 interface IServiceProfileItemCreationData extends IServiceProfileItemDto {
@@ -54,7 +54,7 @@ export class ServiceProfileItemService extends BaseChildService {
   }
 
   private getValidatedPrice(value: number) {
-    PriceValidator.validate(value);
+    PositiveNumberValidator.validate(value);
     return value;
   }
 }

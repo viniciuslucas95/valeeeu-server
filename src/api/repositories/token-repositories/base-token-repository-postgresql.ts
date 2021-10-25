@@ -18,15 +18,9 @@ export class BaseTokenRepositoryPostgresql extends BaseRepositoryPostgresql {
   }
 
   async getByTokenAsync(token: string): Promise<ITokenResultDto | undefined> {
-    const query = `SELECT id, is_forbidden FROM ${this.tableName} WHERE token = $1 LIMIT 1;`;
+    const query = `SELECT id, is_forbidden as "isForbidden" FROM ${this.tableName} WHERE token = $1 LIMIT 1;`;
     const { rows } = await this.connection.query(query, [token]);
-    const result = rows[0];
-    return result
-      ? {
-          id: result.id,
-          isForbidden: result.is_forbidden,
-        }
-      : undefined;
+    return rows[0] ?? undefined;
   }
 
   async getAllAsync(): Promise<unknown[]> {

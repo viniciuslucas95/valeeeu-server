@@ -39,51 +39,30 @@ export class ProfileRatingRepositoryPostgresql
   async getAsync(
     id: string
   ): Promise<IIProfileRatingSingleResultDto | undefined> {
-    const query = `SELECT rating, comment, updated_at FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
+    const query = `SELECT rating, comment, updated_at as "updatedAt" FROM ${this.tableName} WHERE id = $1 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id]);
-    const profileRating = rows[0];
-    return profileRating
-      ? {
-          rating: profileRating.rating,
-          comment: profileRating.comment,
-          date: profileRating.updated_at,
-        }
-      : undefined;
+    return rows[0] ?? undefined;
   }
 
   async getByIdAndParentIdAsync(
     id: string,
     parentId: string
   ): Promise<IIProfileRatingSingleResultDto | undefined> {
-    const query = `SELECT rating, comment, updated_at FROM ${this.tableName} WHERE id = $1 AND profile_id = $2 LIMIT 1`;
+    const query = `SELECT rating, comment, updated_at as "updatedAt" FROM ${this.tableName} WHERE id = $1 AND profile_id = $2 LIMIT 1`;
     const { rows } = await this.connection.query(query, [id, parentId]);
-    const profileRating = rows[0];
-    return profileRating
-      ? {
-          rating: profileRating.rating,
-          comment: profileRating.comment,
-          date: profileRating.updated_at,
-        }
-      : undefined;
+    return rows[0] ?? undefined;
   }
 
   async getAllAsync(): Promise<IIProfileRatingMultipleResultsDto[]> {
-    const query = `SELECT id, rating, comment, updated_at FROM ${this.tableName}`;
+    const query = `SELECT id, rating, comment, updated_at as "updatedAt" FROM ${this.tableName}`;
     const { rows } = await this.connection.query(query);
-    return rows.map((row) => {
-      return {
-        id: row.id,
-        rating: row.rating,
-        comment: row.comment,
-        date: row.updated_at,
-      };
-    });
+    return rows;
   }
 
   async getAllByParentIdAsync(
     parentId: string
   ): Promise<IIProfileRatingMultipleResultsDto[]> {
-    const query = `SELECT id, rating, comment, updated_at FROM ${this.tableName} WHERE profile_id = $1;`;
+    const query = `SELECT id, rating, comment, updated_at as "updatedAt" FROM ${this.tableName} WHERE profile_id = $1;`;
     const { rows } = await this.connection.query(query, [parentId]);
     return rows;
   }

@@ -57,8 +57,14 @@ export async function getProfileAsync(profileId: string) {
   return await axios.get(getShortUrl(profileId), axiosConfig);
 }
 
-export async function getAllProfilesFromAccountAsync(accountId: string) {
-  return await axios.get(getFullUrl(accountId), axiosConfig);
+export async function getAllProfilesFromAccountAsync(
+  accountId: string,
+  accessToken: string
+) {
+  return await axios.get(
+    getFullUrl(accountId),
+    getAxiosConfigWithAccessTokenHeader(accessToken)
+  );
 }
 
 export async function getAllProfilesAsync() {

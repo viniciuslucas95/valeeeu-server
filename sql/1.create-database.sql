@@ -1,4 +1,4 @@
-CREATE DATABASE test
+CREATE DATABASE server
     WITH 
     OWNER = supertest
     ENCODING = 'UTF8'

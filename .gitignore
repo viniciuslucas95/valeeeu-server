@@ -4,9 +4,7 @@ package-lock.json
 
 # distribution
 dist/
-nginx/prod
 .env
-docker-compose.prod.yaml
 
 # misc
 .vscode/**/*

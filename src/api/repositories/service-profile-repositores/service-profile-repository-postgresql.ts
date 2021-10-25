@@ -50,27 +50,17 @@ export class ServiceProfileRepositoryPostgresql
   }
 
   async getAllAsync(): Promise<IServiceProfileMultipleResultsDto[]> {
-    const query = `SELECT id, profile_id FROM ${this.tableName};`;
+    const query = `SELECT id, profile_id as "profileId" FROM ${this.tableName};`;
     const { rows } = await this.connection.query(query);
-    return rows.map((row) => {
-      return {
-        id: row.id,
-        profileId: row.profile_id,
-      };
-    });
+    return rows;
   }
 
   async getAllByParentIdAsync(
     parentId: string
   ): Promise<IServiceProfileMultipleResultsDto[]> {
-    const query = `SELECT id, profile_id FROM ${this.tableName} WHERE profile_id = $1;`;
+    const query = `SELECT id, profile_id as "profileId" FROM ${this.tableName} WHERE profile_id = $1;`;
     const { rows } = await this.connection.query(query, [parentId]);
-    return rows.map((row) => {
-      return {
-        id: row.id,
-        profileId: row.profile_id,
-      };
-    });
+    return rows;
   }
 
   async checkExistenceByParentIdAsync(parentId: string): Promise<boolean> {
